@@ -130,7 +130,7 @@
 
 #fok-filters-form {
     display: flex;
-    flex-wrap: wrap; /* Дозволяємо перенос елементів */
+    flex-wrap: wrap;
 }
 
 .fok-list-sidebar h3 {
@@ -142,7 +142,7 @@
 }
 
 .fok-filter-group {
-    width: 100%; /* Кожна група фільтрів займає повну ширину */
+    width: 100%;
     margin-bottom: 25px;
 }
 
@@ -160,7 +160,7 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    box-sizing: border-box; /* Важливо для правильного розрахунку ширини */
+    box-sizing: border-box;
 }
 
 /* Кнопки для кімнат */
@@ -194,8 +194,8 @@
 
 .fok-filter-range input {
     text-align: center;
-    flex: 1; /* Дозволяє полям гнучко займати простір */
-    min-width: 0; /* Виправляє проблему переповнення у flex-контейнерах */
+    flex: 1;
+    min-width: 0;
 }
 
 .fok-filter-range span {
@@ -207,20 +207,20 @@
 .fok-list-results {
     width: 100%;
     position: relative;
-    overflow-x: auto; /* Додаємо горизонтальний скрол, якщо шахматка не влазить */
+    overflow-x: auto;
 }
 
 .fok-chessboard {
     display: grid; 
     grid-auto-flow: row;
     gap: 30px; 
-    justify-items: start; /* ВИРІВНЮЄМО СЕКЦІЇ ПО ЛІВОМУ КРАЮ */
+    justify-items: start;
 }
 
 .fok-section-block {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Вирівнюємо заголовок по лівому краю відносно сітки */
+    align-items: flex-start;
 }
 
 .fok-section-block h4 {
@@ -273,7 +273,7 @@
     justify-content: space-between;
     font-size: 13px;
     cursor: pointer;
-    transition: border-color 0.2s; 
+    transition: border-color 0.2s, background-color 0.2s; 
     background-color: #f8f9fa;
     border-radius: 4px;
     box-sizing: border-box;
@@ -281,8 +281,10 @@
     color: #333;
 }
 
+.fok-apartment-cell.active,
 .fok-apartment-cell:hover {
     border-color: var(--fok-accent-color, #0073aa);
+    background-color: #eef7ff;
     z-index: 5;
 }
 
@@ -334,8 +336,17 @@
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 /* --- Адаптивність --- */
+@media (max-width: 960px) {
+    #fok-list-mode .fok-list-container {
+        flex-direction: column;
+    }
+    #fok-details-panel.is-open {
+        flex-basis: auto;
+        max-width: 100%;
+        margin-top: 20px;
+    }
+}
 @media (max-width: 782px) {
-    #fok-list-mode .fok-list-container { flex-direction: column; }
     .fok-list-sidebar { width: 100%; }
 }
 @media (max-width: 580px) {
@@ -343,4 +354,304 @@
     .fok-navigation { flex-grow: 1; display: flex; flex-wrap: wrap-reverse; justify-content: flex-end; gap: 10px; }
     .fok-rc-switcher { width: 100%; }
     .fok-rc-switcher select { width: 100%; }
+}
+
+/* === СТИЛІ ДЛЯ ВИЇЖДЖАЮЧОЇ ПАНЕЛІ === */
+
+#fok-details-panel {
+    flex: 0 0 0; 
+    max-width: 0; 
+    opacity: 0;
+    overflow: hidden;
+    transition: flex-basis 0.4s ease, max-width 0.4s ease, opacity 0.2s ease;
+    background: #fdfdfd;
+    box-sizing: border-box;
+}
+
+#fok-details-panel.is-open {
+    flex-basis: 280px;
+    max-width: 280px; 
+    opacity: 1;
+    border: 1px solid #e9e9e9;
+    border-radius: 8px;
+}
+
+#fok-panel-content-wrapper {
+    position: relative;
+    height: 100%;
+}
+
+#fok-panel-content {
+    padding: 20px;
+    overflow-y: auto;
+    height: 100%;
+    transition: opacity 0.3s ease-in-out;
+}
+
+#fok-panel-close {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #e74c3c;
+    border: none;
+    color: white;
+    font-size: 16px;
+    line-height: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+#fok-panel-close:hover {
+    transform: scale(1.1);
+}
+
+.fok-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 0; /* Прибрали відступ */
+    margin-bottom: 20px;
+}
+
+.fok-panel-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.fok-panel-status.status-vilno { background-color: #28a745; color: white; }
+.fok-panel-status.status-prodano { background-color: #dc3545; color: white; }
+.fok-panel-status.status-zabronovano { background-color: #ffc107; color: #333; }
+.fok-panel-status.status-unknown { background-color: #e9ecef; color: #6c757d; }
+
+.fok-panel-price {
+    text-align: right;
+}
+
+.fok-panel-price .total-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--fok-accent-color, #0073aa);
+}
+
+.fok-panel-price .price-per-m2 {
+    font-size: 12px;
+    color: #666;
+}
+
+.fok-panel-gallery .main-image {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    margin-bottom: 15px; /* Додано відступ */
+}
+
+.fok-panel-gallery .main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.fok-panel-gallery .thumbnails {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.fok-panel-gallery .thumb {
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    overflow: hidden;
+}
+
+.fok-panel-gallery .thumb.active,
+.fok-panel-gallery .thumb:hover {
+    border-color: var(--fok-accent-color, #0073aa);
+}
+
+.fok-panel-gallery .thumb img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.fok-panel-params {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    font-size: 14px;
+}
+
+.fok-panel-params li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.fok-panel-params li:last-child {
+    border-bottom: none;
+}
+
+.fok-panel-params li strong {
+    color: #333;
+    font-weight: 500;
+}
+
+.fok-booking-button, .fok-booking-btn-show {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: var(--fok-accent-color, #0073aa);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-align: center;
+    display: inline-block;
+    box-sizing: border-box;
+}
+.fok-booking-button:hover, .fok-booking-btn-show:hover {
+    background-color: #333;
+}
+.fok-booking-button:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+.fok-booking-form-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.fok-form-back-btn {
+    background: none;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 5px;
+    margin-bottom: 20px;
+    text-align: left;
+    align-self: flex-start;
+}
+.fok-form-back-btn:hover {
+    color: var(--fok-accent-color, #0073aa);
+}
+
+#fok-booking-form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+#fok-booking-form p {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+#fok-booking-form .form-group {
+    margin-bottom: 15px;
+}
+
+#fok-booking-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+#fok-booking-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+#fok-booking-form .fok-booking-button {
+    margin-top: auto;
+}
+
+#booking-form-message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    display: none;
+}
+
+#booking-form-message.success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+#booking-form-message.error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* === СТИЛІ ДЛЯ ЛАЙТБОКСУ === */
+.fok-lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.fok-lightbox-overlay.is-open {
+    display: flex;
+}
+.fok-lightbox-content {
+    max-width: 95%;
+    max-height: 95%;
+    object-fit: contain;
+}
+.fok-lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+    line-height: 1;
+}
+.fok-lightbox-close:hover {
+    color: #bbb;
 }
