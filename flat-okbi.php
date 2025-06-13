@@ -1,17 +1,17 @@
 <?php
 /**
- * Plugin Name:       Flat Okbi
- * Plugin URI:        https://okbi.pp.ua
- * Description:       Плагін для керування каталогом квартир та житлових комплексів.
- * Version:           1.6.4
- * Requires at least: 5.2
- * Requires PHP:      7.2
- * Author:            Okbi
- * Author URI:        https://okbi.pp.ua
- * License:           GPL v2 or later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       okbi-apartments
- * Domain Path:       /languages
+ * Plugin Name:         Flat Okbi
+ * Plugin URI:          https://okbi.pp.ua
+ * Description:         Плагін для керування каталогом квартир та житлових комплексів.
+ * Version:             1.6.14
+ * Requires at least:   5.2
+ * Requires PHP:        7.2
+ * Author:              Okbi
+ * Author URI:          https://okbi.pp.ua
+ * License:             GPL v2 or later
+ * License URI:         https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:         okbi-apartments
+ * Domain Path:         /languages
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -121,9 +121,21 @@ function fok_render_viewer_shortcode( $atts ) {
                          <div class="fok-loader"></div>
                          <div class="fok-list-content"></div>
                     </div>
+                    <!-- Панель з деталями -->
+                    <aside id="fok-details-panel">
+                        <button id="fok-panel-close">&times;</button>
+                        <div id="fok-panel-content">
+                            <!-- AJAX-контент буде завантажено сюди -->
+                        </div>
+                    </aside>
                 </div>
             </div>
         </main>
+    </div>
+    <!-- HTML-розмітка для лайтбоксу -->
+    <div id="fok-lightbox" class="fok-lightbox-overlay">
+        <span class="fok-lightbox-close">&times;</span>
+        <img class="fok-lightbox-content" src="">
     </div>
     <?php
     return ob_get_clean();
@@ -131,8 +143,8 @@ function fok_render_viewer_shortcode( $atts ) {
 
 function fok_enqueue_frontend_assets() {
     wp_enqueue_style( 'dashicons' );
-    wp_enqueue_style('fok-frontend-style', plugin_dir_url( __FILE__ ) . 'assets/css/frontend-style.css', [], '1.6.4');
-    wp_enqueue_script('fok-frontend-script', plugin_dir_url( __FILE__ ) . 'assets/js/frontend-script.js', ['jquery'], '1.6.4', true);
+    wp_enqueue_style('fok-frontend-style', plugin_dir_url( __FILE__ ) . 'assets/css/frontend-style.css', [], '1.6.14');
+    wp_enqueue_script('fok-frontend-script', plugin_dir_url( __FILE__ ) . 'assets/js/frontend-script.js', ['jquery'], '1.6.14', true);
     wp_localize_script( 'fok-frontend-script', 'fok_ajax', ['ajax_url' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'fok_viewer_nonce' )]);
 }
 
@@ -236,21 +248,7 @@ function fok_filter_apartments_ajax_handler() {
 
 // --- БЕКЕНД ЛОГІКА ---
 
-/**
- * Автоматично генерує унікальний ID для квартир, створених вручну.
- */
-function fok_generate_unique_id_on_save( $post_id ) {
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
-    if ( ! current_user_can( 'edit_post', $post_id ) ) return;
-    if ( 'apartment' !== get_post_type($post_id) ) return;
-
-    $unique_id = get_post_meta( $post_id, 'fok_apartment_unique_id', true );
-
-    if ( empty( $unique_id ) ) {
-        $new_unique_id = 'manual-' . uniqid();
-        update_post_meta( $post_id, 'fok_apartment_unique_id', $new_unique_id );
-    }
-}
+function fok_generate_unique_id_on_save( $post_id ) { if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return; if ( ! current_user_can( 'edit_post', $post_id ) ) return; if ( 'apartment' !== get_post_type($post_id) ) return; $unique_id = get_post_meta( $post_id, 'fok_apartment_unique_id', true ); if ( empty( $unique_id ) ) { $new_unique_id = 'manual-' . uniqid(); update_post_meta( $post_id, 'fok_apartment_unique_id', $new_unique_id ); } }
 add_action( 'save_post_apartment', 'fok_generate_unique_id_on_save' );
 
 function fok_check_meta_box_dependency() { if ( ! function_exists( 'is_plugin_active' ) ) { include_once( ABSPATH . 'wp-admin/includes/plugin.php' ); } if ( !is_plugin_active( 'meta-box/meta-box.php' ) && !is_plugin_active( 'meta-box-aio/meta-box-aio.php' ) ) { add_action( 'admin_notices', 'fok_meta_box_not_found_notice' ); } }
@@ -268,53 +266,78 @@ function fok_add_admin_list_filters() { global $typenow; if ( $typenow === 'sect
 add_action( 'restrict_manage_posts', 'fok_add_admin_list_filters' );
 function fok_filter_admin_list_query( $query ) { global $pagenow, $typenow; if ( $pagenow === 'edit.php' && $query->is_main_query() ) { if ( isset( $_GET['fok_rc_filter'] ) && (int) $_GET['fok_rc_filter'] > 0 ) { $rc_id = (int) $_GET['fok_rc_filter']; $meta_key = ( $typenow === 'section' ) ? 'fok_section_rc_link' : 'fok_apartment_rc_link'; $meta_query = $query->get( 'meta_query' ) ?: array(); $meta_query[] = ['key' => $meta_key, 'value' => $rc_id, 'compare' => '=']; $query->set( 'meta_query', $meta_query ); } if ( $typenow === 'apartment' && isset( $_GET['fok_status_filter'] ) && ! empty( $_GET['fok_status_filter'] ) ) { $status_slug = sanitize_text_field( $_GET['fok_status_filter'] ); $tax_query = $query->get( 'tax_query' ) ?: array(); $tax_query[] = ['taxonomy' => 'status', 'field' => 'slug', 'terms' => $status_slug]; $query->set( 'tax_query', $tax_query ); } } }
 add_action( 'parse_query', 'fok_filter_admin_list_query' );
-function fok_plugin_activate() {
-    fok_register_post_types();
-    fok_register_taxonomies();
-    fok_insert_initial_terms();
-    flush_rewrite_rules();
-}
+function fok_plugin_activate() { fok_register_post_types(); fok_register_taxonomies(); fok_insert_initial_terms(); flush_rewrite_rules(); }
 register_activation_hook( __FILE__, 'fok_plugin_activate' );
-function fok_insert_initial_terms() {
-    $statuses = [
-        'Вільно'       => 'vilno',
-        'Продано'      => 'prodano',
-        'Заброньовано' => 'zabronovano',
-    ];
-    foreach ( $statuses as $name => $slug ) {
-        if ( !term_exists( $slug, 'status' ) ) {
-            wp_insert_term( $name, 'status', ['slug' => $slug] );
-        }
-    }
-}
-function fok_add_settings_page() {
-    add_menu_page(__( 'Налаштування Flat Okbi', 'okbi-apartments' ), 'Flat Okbi', 'manage_options', 'flat_okbi_settings', 'fok_render_settings_page', 'dashicons-admin-settings', 20);
-    add_submenu_page('flat_okbi_settings', __( 'Імпорт/Експорт Квартир', 'okbi-apartments' ), __( 'Імпорт/Експорт', 'okbi-apartments' ), 'manage_options', 'flat_okbi_import', 'fok_render_importer_page');
-}
+function fok_insert_initial_terms() { $statuses = [ 'Вільно' => 'vilno', 'Продано' => 'prodano', 'Заброньовано' => 'zabronovano' ]; foreach ( $statuses as $name => $slug ) { if ( !term_exists( $slug, 'status' ) ) { wp_insert_term( $name, 'status', ['slug' => $slug] ); } } }
+function fok_add_settings_page() { add_menu_page(__( 'Налаштування Flat Okbi', 'okbi-apartments' ), 'Flat Okbi', 'manage_options', 'flat_okbi_settings', 'fok_render_settings_page', 'dashicons-admin-settings', 20); add_submenu_page('flat_okbi_settings', __( 'Імпорт/Експорт Квартир', 'okbi-apartments' ), __( 'Імпорт/Експорт', 'okbi-apartments' ), 'manage_options', 'flat_okbi_import', 'fok_render_importer_page'); }
 add_action( 'admin_menu', 'fok_add_settings_page' );
-function fok_render_settings_page() {
-    ?>
-    <div class="wrap">
-        <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-        <form action="options.php" method="post">
-            <?php
-            settings_fields( 'fok_global_settings_group' );
-            do_settings_sections( 'flat_okbi_settings' );
-            submit_button( __( 'Зберегти налаштування', 'okbi-apartments' ) );
-            ?>
-        </form>
-    </div>
-    <?php
-}
-function fok_register_settings() {
-    register_setting('fok_global_settings_group', 'fok_global_settings', 'fok_sanitize_settings');
-    add_settings_section('fok_main_settings_section', __( 'Основні налаштування', 'okbi-apartments' ), null, 'flat_okbi_settings');
-    add_settings_field('fok_logo_id', __('Логотип', 'okbi-apartments'), 'fok_render_logo_field', 'flat_okbi_settings', 'fok_main_settings_section');
-    add_settings_field('fok_accent_color', __('Акцентний колір', 'okbi-apartments'), 'fok_render_accent_color_field', 'flat_okbi_settings', 'fok_main_settings_section');
-}
+function fok_render_settings_page() { ?> <div class="wrap"> <h1><?php echo esc_html( get_admin_page_title() ); ?></h1> <form action="options.php" method="post"> <?php settings_fields( 'fok_global_settings_group' ); do_settings_sections( 'flat_okbi_settings' ); submit_button( __( 'Зберегти налаштування', 'okbi-apartments' ) ); ?> </form> </div> <?php }
+function fok_register_settings() { register_setting('fok_global_settings_group', 'fok_global_settings', 'fok_sanitize_settings'); add_settings_section('fok_main_settings_section', __( 'Основні налаштування', 'okbi-apartments' ), null, 'flat_okbi_settings'); add_settings_field('fok_logo_id', __('Логотип', 'okbi-apartments'), 'fok_render_logo_field', 'flat_okbi_settings', 'fok_main_settings_section'); add_settings_field('fok_accent_color', __('Акцентний колір', 'okbi-apartments'), 'fok_render_accent_color_field', 'flat_okbi_settings', 'fok_main_settings_section'); }
 add_action( 'admin_init', 'fok_register_settings' );
 function fok_render_logo_field() { $options = get_option( 'fok_global_settings' ); $logo_id = $options['logo_id'] ?? ''; $logo_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'medium' ) : ''; echo '<div class="fok-image-uploader"><img src="' . esc_url( $logo_url ) . '" style="max-width: 200px; height: auto; border: 1px solid #ccc; padding: 5px; margin-bottom: 10px; display: ' . ($logo_id ? 'block' : 'none') . ';" /><input type="hidden" name="fok_global_settings[logo_id]" value="' . esc_attr( $logo_id ) . '" /><button type="button" class="button fok-upload-button">' . __( 'Завантажити/Вибрати лого', 'okbi-apartments' ) . '</button><button type="button" class="button fok-remove-button" style="display: ' . ($logo_id ? 'inline-block' : 'none') . ';">' . __( 'Видалити', 'okbi-apartments' ) . '</button></div>'; }
 function fok_render_accent_color_field() { $options = get_option( 'fok_global_settings' ); $color = $options['accent_color'] ?? '#0073aa'; echo '<input type="text" name="fok_global_settings[accent_color]" value="' . esc_attr( $color ) . '" class="fok-color-picker" />'; }
 function fok_enqueue_admin_scripts( $hook ) { $current_screen = get_current_screen(); if ( 'toplevel_page_flat_okbi_settings' === $current_screen->base || 'flat-okbi_page_flat_okbi_import' === $current_screen->base ) { wp_enqueue_style( 'wp-color-picker' ); wp_enqueue_media(); wp_enqueue_script('fok-admin-script', plugin_dir_url( __FILE__ ) . 'assets/js/admin-settings.js', array( 'wp-color-picker', 'jquery' ), '1.2.0', true); } }
 add_action( 'admin_enqueue_scripts', 'fok_enqueue_admin_scripts' );
 function fok_sanitize_settings( $input ) { $new_input = []; if ( isset( $input['logo_id'] ) ) { $new_input['logo_id'] = absint( $input['logo_id'] ); } if ( isset( $input['accent_color'] ) ) { $new_input['accent_color'] = sanitize_hex_color( $input['accent_color'] ); } return $new_input; }
+
+/**
+ * AJAX-обробник для отримання даних про одну квартиру для бічної панелі.
+ */
+function fok_get_apartment_details_ajax_handler() {
+    check_ajax_referer( 'fok_viewer_nonce', 'nonce' );
+
+    if ( ! isset( $_POST['apartment_id'] ) ) {
+        wp_send_json_error( 'Відсутній ID квартири.' );
+    }
+    $apartment_id = absint( $_POST['apartment_id'] );
+
+    $apartment = get_post( $apartment_id );
+    if ( ! $apartment || $apartment->post_type !== 'apartment' ) {
+        wp_send_json_error( 'Квартиру не знайдено.' );
+    }
+
+    $status_terms = get_the_terms( $apartment_id, 'status' );
+    $price_group = get_post_meta( $apartment_id, 'fok_apartment_price', true );
+    $area = (float) get_post_meta( $apartment_id, 'fok_apartment_area', true );
+    $price_per_m2 = isset($price_group['value']) ? (float)$price_group['value'] : 0;
+    $apartment_number = get_post_meta( $apartment_id, 'fok_apartment_number', true );
+    $total_price = $area * $price_per_m2;
+    
+    $data = [
+        'id'            => $apartment_id,
+        'apartment_number' => $apartment_number,
+        'status_name'   => !is_wp_error($status_terms) && !empty($status_terms) ? $status_terms[0]->name : 'Не вказано',
+        'status_slug'   => !is_wp_error($status_terms) && !empty($status_terms) ? $status_terms[0]->slug : 'unknown',
+        'gallery'       => [],
+        'params'        => [
+            'Номер квартири' => $apartment_number,
+            'Площа'        => $area . ' м²',
+            'Поверх'       => get_post_meta( $apartment_id, 'fok_apartment_floor', true ),
+            'К-сть кімнат' => get_post_meta( $apartment_id, 'fok_apartment_rooms', true ),
+        ],
+        'price_per_m2'  => number_format($price_per_m2, 0, '.', ' '),
+        'total_price'   => number_format($total_price, 0, '.', ' '),
+        'currency'      => $price_group['currency'] ?? 'UAH',
+    ];
+
+    $gallery = [];
+    $image_ids = get_post_meta( $apartment_id, 'fok_apartment_layout_images', false );
+
+    if ( !empty( $image_ids ) ) {
+        foreach ( $image_ids as $image_id ) {
+             $full_url = wp_get_attachment_image_url( (int)$image_id, 'large' );
+             $thumb_url = wp_get_attachment_image_url( (int)$image_id, 'thumbnail' );
+             if($full_url && $thumb_url){
+                 $gallery[] = [
+                    'full'  => $full_url,
+                    'thumb' => $thumb_url,
+                ];
+             }
+        }
+    }
+    $data['gallery'] = $gallery;
+
+    wp_send_json_success( $data );
+}
+add_action( 'wp_ajax_fok_get_apartment_details', 'fok_get_apartment_details_ajax_handler' );
+add_action( 'wp_ajax_nopriv_fok_get_apartment_details', 'fok_get_apartment_details_ajax_handler' );
