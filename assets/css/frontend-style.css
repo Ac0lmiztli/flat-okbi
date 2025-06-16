@@ -1,657 +1,564 @@
-/* --- Загальна обгортка --- */
-.fok-viewer-container {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: #f9f9f9;
-}
+/* --- ГЛОБАЛЬНІ СТИЛІ ДЛЯ ПОВНОЕКРАННОГО РЕЖИМУ --- */
 
-/* --- Хедер --- */
-.fok-viewer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.fok-logo img {
-    max-height: 40px;
-    width: auto;
-    display: block;
-}
-
-.fok-navigation {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-/* --- Перемикач ЖК --- */
-.fok-rc-switcher {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.fok-rc-switcher label {
-    font-weight: 500;
-    color: #555;
-    white-space: nowrap;
-}
-
-.fok-rc-switcher select {
-    min-width: 180px;
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fff;
-    -webkit-appearance: none;
-    appearance: none;
-    transition: border-color 0.2s;
-}
-
-.fok-rc-switcher select:focus {
-    outline: none;
-    border-color: var(--fok-accent-color, #0073aa);
-}
-
-/* --- Кнопки перемикання режимів --- */
-.fok-view-modes {
-    display: flex;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+/* Блокування прокрутки основного сайту */
+body.fok-viewer-is-open {
     overflow: hidden;
 }
 
-.fok-view-modes button {
-    padding: 8px;
-    width: 40px;
-    height: 40px;
-    border: none;
-    background-color: #f0f0f0;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-    color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-}
-
-.fok-view-modes button .dashicons {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-}
-
-.fok-view-modes button:first-child {
-    border-right: 1px solid #ccc;
-}
-
-.fok-view-modes button:hover {
-    background-color: #e9e9e9;
-}
-
-.fok-view-modes button.active {
-    background-color: var(--fok-accent-color, #0073aa);
-    color: #fff;
-}
-
-/* --- Основний контент --- */
-.fok-viewer-content {
-    padding: 20px;
-    min-height: 500px;
-    background-color: #fff;
-}
-
-.fok-viewer-content > div:not(.active) {
-    display: none;
-}
-
-/* --- Режим списку (тепер шахматка) --- */
-#fok-list-mode .fok-list-container {
-    display: flex;
-    gap: 30px;
-    align-items: flex-start;
-}
-
-/* --- Фільтри (новий дизайн) --- */
-.fok-list-sidebar {
-    width: 280px;
-    flex-shrink: 0;
-    background-color: #fdfdfd;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #e9e9e9;
-}
-
-#fok-filters-form {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.fok-list-sidebar h3 {
-    width: 100%;
-    margin-top: 0;
-    margin-bottom: 25px;
-    font-size: 18px;
-    text-align: center;
-}
-
-.fok-filter-group {
-    width: 100%;
-    margin-bottom: 25px;
-}
-
-.fok-filter-group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 12px;
-    font-size: 14px;
-    color: #333;
-}
-
-.fok-filter-group input,
-.fok-filter-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-}
-
-/* Кнопки для кімнат */
-.fok-room-buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-}
-
-.fok-room-buttons .room-btn {
-    text-align: center;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    font-weight: 500;
-}
-.fok-room-buttons .room-btn.active {
-    background-color: var(--fok-accent-color, #0073aa);
-    color: #fff;
-    border-color: var(--fok-accent-color, #0073aa);
-}
-
-/* Поля "від" і "до" */
-.fok-filter-range {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.fok-filter-range input {
-    text-align: center;
-    flex: 1;
-    min-width: 0;
-}
-
-.fok-filter-range span {
-    color: #999;
-}
-
-
-/* --- Результати (Шахматка) --- */
-.fok-list-results {
-    width: 100%;
-    position: relative;
-    overflow-x: auto;
-}
-
-.fok-chessboard {
-    display: grid; 
-    grid-auto-flow: row;
-    gap: 30px; 
-    justify-items: start;
-}
-
-.fok-section-block {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.fok-section-block h4 {
-    margin: 0;
-    padding-bottom: 10px;
-    line-height: 1.2;
-    font-weight: 600;
-    font-size: 16px;
-    white-space: nowrap;
-}
-
-.fok-section-grid {
-    display: flex;
-}
-
-.fok-floor-labels {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end; 
-    padding-right: 15px;
-}
-.fok-floor-label {
-    height: 42px; 
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    font-weight: 500;
-    color: #555;
-    box-sizing: border-box;
-}
-
-.fok-floor-row-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.fok-floor-row {
-    display: flex;
-    height: 42px; 
-    align-items: center;
-}
-
-.fok-apartment-cell {
-    width: 90px;
-    height: 40px;
-    border: 1px solid #ccc;
-    margin: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 13px;
-    cursor: pointer;
-    transition: border-color 0.2s, background-color 0.2s; 
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    box-sizing: border-box;
-    padding: 0 8px;
-    color: #333;
-}
-
-.fok-apartment-cell.active,
-.fok-apartment-cell:hover {
-    border-color: var(--fok-accent-color, #0073aa);
-    background-color: #eef7ff;
-    z-index: 5;
-}
-
-.fok-cell-area {
-    font-weight: 500;
-}
-.fok-cell-area sup {
-    font-size: 0.7em;
-}
-
-
-.fok-cell-rooms {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 12px;
-}
-
-
-/* Статуси квартир */
-.fok-cell-rooms.status-vilno { background-color: #28a745; color: white; }
-.fok-cell-rooms.status-prodano { background-color: #dc3545; color: white; }
-.fok-cell-rooms.status-zabronovano { background-color: #ffc107; color: #333; }
-.fok-cell-rooms.status-unknown { background-color: #e9ecef; color: #6c757d; }
-
-/* --- Індикатор завантаження --- */
-.fok-loader {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(255, 255, 255, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    display: none;
-}
-.fok-loader::after {
-    content: '';
-    width: 40px; height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--fok-accent-color, #0073aa);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-/* --- Адаптивність --- */
-@media (max-width: 960px) {
-    #fok-list-mode .fok-list-container {
-        flex-direction: column;
-    }
-    #fok-details-panel.is-open {
-        flex-basis: auto;
-        max-width: 100%;
-        margin-top: 20px;
-    }
-}
-@media (max-width: 782px) {
-    .fok-list-sidebar { width: 100%; }
-}
-@media (max-width: 580px) {
-    .fok-viewer-header { flex-wrap: wrap; row-gap: 15px; }
-    .fok-navigation { flex-grow: 1; display: flex; flex-wrap: wrap-reverse; justify-content: flex-end; gap: 10px; }
-    .fok-rc-switcher { width: 100%; }
-    .fok-rc-switcher select { width: 100%; }
-}
-
-/* === СТИЛІ ДЛЯ ВИЇЖДЖАЮЧОЇ ПАНЕЛІ === */
-
-#fok-details-panel {
-    flex: 0 0 0; 
-    max-width: 0; 
-    opacity: 0;
-    overflow: hidden;
-    transition: flex-basis 0.4s ease, max-width 0.4s ease, opacity 0.2s ease;
-    background: #fdfdfd;
-    box-sizing: border-box;
-}
-
-#fok-details-panel.is-open {
-    flex-basis: 280px;
-    max-width: 280px; 
-    opacity: 1;
-    border: 1px solid #e9e9e9;
-    border-radius: 8px;
-}
-
-#fok-panel-content-wrapper {
-    position: relative;
-    height: 100%;
-}
-
-#fok-panel-content {
-    padding: 20px;
-    overflow-y: auto;
-    height: 100%;
-    transition: opacity 0.3s ease-in-out;
-}
-
-#fok-panel-close {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #e74c3c;
-    border: none;
-    color: white;
-    font-size: 16px;
-    line-height: 24px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 10;
-    transition: transform 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-}
-#fok-panel-close:hover {
-    transform: scale(1.1);
-}
-
-.fok-panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 10px;
-    margin-top: 0; /* Прибрали відступ */
-    margin-bottom: 20px;
-}
-
-.fok-panel-status {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-.fok-panel-status.status-vilno { background-color: #28a745; color: white; }
-.fok-panel-status.status-prodano { background-color: #dc3545; color: white; }
-.fok-panel-status.status-zabronovano { background-color: #ffc107; color: #333; }
-.fok-panel-status.status-unknown { background-color: #e9ecef; color: #6c757d; }
-
-.fok-panel-price {
-    text-align: right;
-}
-
-.fok-panel-price .total-price {
-    font-size: 16px;
-    font-weight: bold;
-    color: var(--fok-accent-color, #0073aa);
-}
-
-.fok-panel-price .price-per-m2 {
-    font-size: 12px;
-    color: #666;
-}
-
-.fok-panel-gallery .main-image {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    overflow: hidden;
-    height: 180px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f0f0f0;
-    cursor: pointer;
-    margin-bottom: 15px; /* Додано відступ */
-}
-
-.fok-panel-gallery .main-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.fok-panel-gallery .thumbnails {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-    gap: 8px;
-    margin-top: 8px;
-}
-
-.fok-panel-gallery .thumb {
-    border: 2px solid transparent;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    overflow: hidden;
-}
-
-.fok-panel-gallery .thumb.active,
-.fok-panel-gallery .thumb:hover {
-    border-color: var(--fok-accent-color, #0073aa);
-}
-
-.fok-panel-gallery .thumb img {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-.fok-panel-params {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
-    font-size: 14px;
-}
-
-.fok-panel-params li {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.fok-panel-params li:last-child {
-    border-bottom: none;
-}
-
-.fok-panel-params li strong {
-    color: #333;
-    font-weight: 500;
-}
-
-.fok-booking-button, .fok-booking-btn-show {
-    width: 100%;
-    padding: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: var(--fok-accent-color, #0073aa);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    text-align: center;
-    display: inline-block;
-    box-sizing: border-box;
-}
-.fok-booking-button:hover, .fok-booking-btn-show:hover {
-    background-color: #333;
-}
-.fok-booking-button:disabled {
-    background-color: #999;
-    cursor: not-allowed;
-}
-
-.fok-booking-form-wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.fok-form-back-btn {
-    background: none;
-    border: none;
-    color: #555;
-    cursor: pointer;
-    font-size: 13px;
-    padding: 5px;
-    margin-bottom: 20px;
-    text-align: left;
-    align-self: flex-start;
-}
-.fok-form-back-btn:hover {
-    color: var(--fok-accent-color, #0073aa);
-}
-
-#fok-booking-form {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-#fok-booking-form p {
-    font-size: 18px;
-    font-weight: 600;
-    margin-top: 0;
-    margin-bottom: 25px;
-    text-align: center;
-}
-
-#fok-booking-form .form-group {
-    margin-bottom: 15px;
-}
-
-#fok-booking-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-    font-size: 13px;
-}
-
-#fok-booking-form input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-}
-#fok-booking-form .fok-booking-button {
-    margin-top: auto;
-}
-
-#booking-form-message {
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 6px;
-    display: none;
-}
-
-#booking-form-message.success {
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-    color: #155724;
-}
-
-#booking-form-message.error {
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
-    color: #721c24;
-}
-
-/* === СТИЛІ ДЛЯ ЛАЙТБОКСУ === */
-.fok-lightbox-overlay {
+/* Основний контейнер, який стає оверлеєм */
+#fok-viewer-fullscreen-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    z-index: 9999;
-    display: none;
-    justify-content: center;
+    background-color: #f7f9fc;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    
+    /* Анімація появи */
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.05);
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s, transform 0.3s ease;
+}
+
+#fok-viewer-fullscreen-container.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    transition-delay: 0s;
+}
+
+/* Головна кнопка закриття */
+#fok-viewer-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #333;
+    border: none;
+    border-radius: 50%;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 1100; /* Має бути вище за все */
+    transition: background-color 0.2s, transform 0.2s;
+    display: flex;
     align-items: center;
+    justify-content: center;
+    color: #fff;
+    padding: 0;
+}
+#fok-viewer-close:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    transform: rotate(90deg);
+}
+
+/* --- ХЕДЕР КАТАЛОГУ --- */
+.fok-viewer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 70px 20px 20px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+
+.fok-logo img { max-height: 40px; width: auto; display: block; padding-right: 5px; }
+
+#fok-rc-title-wrapper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+#fok-current-rc-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.fok-header-actions { display: flex; align-items: center; gap: 15px; }
+
+/* Кнопка фільтрів на мобільному */
+#fok-mobile-filter-trigger {
+    display: none; 
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    color: #333;
+}
+#fok-mobile-filter-trigger .dashicons {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+}
+
+/* Перемикачі режимів */
+.fok-view-modes { display: flex; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; }
+.fok-view-modes button { padding: 8px; width: 40px; height: 40px; border: none; background-color: #f0f0f0; cursor: pointer; transition: background-color 0.2s, color 0.2s; color: #333; display:flex; align-items:center; justify-content:center;}
+.fok-view-modes button:first-child { border-right: 1px solid #ccc; }
+.fok-view-modes button.active { background-color: var(--fok-accent-color, #0073aa); color: #fff; }
+
+
+/* --- ОСНОВНИЙ КОНТЕНТ --- */
+.fok-viewer-content {
+    flex-grow: 1;
+    overflow: visible; 
+    background-color: #f7f9fc;
+    position: relative;
+}
+#fok-list-mode, #fok-interactive-mode { display: none; height: 100%; }
+#fok-list-mode.active, #fok-interactive-mode.active { display: block; }
+
+#fok-list-mode .fok-list-container {
+    display: flex;
+    height: 100%;
+    gap: 20px;
     padding: 20px;
     box-sizing: border-box;
 }
-.fok-lightbox-overlay.is-open {
+
+/* --- САЙДБАР (ФІЛЬТРИ) --- */
+.fok-list-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e9e9e9;
+    overflow-y: auto;
+    position: relative;
+}
+#fok-filters-form {
     display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
 }
-.fok-lightbox-content {
-    max-width: 95%;
-    max-height: 95%;
-    object-fit: contain;
+#fok-sidebar-close { display: none; }
+.fok-list-sidebar h3 { width: 100%; margin-top: 0; margin-bottom: 25px; font-size: 18px; text-align: center; }
+.fok-filter-group { width: 100%; margin-bottom: 0; }
+.fok-filter-group label { font-weight: 600; margin-bottom: 12px; font-size: 14px; color: #333; }
+.fok-filter-group input, .fok-filter-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+.fok-room-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.fok-room-buttons .room-btn { text-align: center; padding: 10px; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; transition: all 0.2s ease-in-out; font-weight: 500; }
+.fok-room-buttons .room-btn.active { background-color: var(--fok-accent-color, #0073aa); color: #fff; border-color: var(--fok-accent-color, #0073aa); }
+.fok-filter-range { display: flex; gap: 8px; align-items: center; }
+.fok-filter-range input { text-align: center; flex: 1; min-width: 0; }
+.fok-filter-range span { color: #999; }
+
+/* --- РЕЗУЛЬТАТИ ("Шахматка") --- */
+.fok-list-results {
+    flex-grow: 1;
+    position: relative;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #e9e9e9;
 }
-.fok-lightbox-close {
-    position: absolute;
-    top: 20px;
-    right: 35px;
-    color: #fff;
-    font-size: 40px;
-    font-weight: bold;
-    transition: 0.3s;
+.fok-chessboard { display: grid; grid-auto-flow: row; gap: 30px; justify-items: start; }
+.fok-section-block { display: flex; flex-direction: column; align-items: flex-start; }
+.fok-section-block h4 { margin: 0; padding-bottom: 10px; line-height: 1.2; font-weight: 600; font-size: 16px; white-space: nowrap; }
+.fok-section-grid { display: flex; }
+.fok-floor-labels { display: flex; flex-direction: column-reverse; padding-right: 15px; }
+.fok-floor-label { height: 42px; display: flex; align-items: center; justify-content: flex-end; font-weight: 500; color: #555; box-sizing: border-box; }
+.fok-floor-row-container { display: flex; flex-direction: column-reverse; }
+.fok-floor-row { display: flex; height: 42px; align-items: center; }
+.fok-apartment-cell { width: 90px; height: 40px; border: 1px solid #ccc; margin: 1px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; cursor: pointer; transition: border-color 0.2s, background-color 0.2s, transform 0.2s; background-color: #f8f9fa; border-radius: 4px; box-sizing: border-box; padding: 0 8px; color: #333; }
+.fok-apartment-cell.active, .fok-apartment-cell:hover { border-color: var(--fok-accent-color, #0073aa); background-color: #eef7ff; z-index: 5; transform: scale(1.03); }
+.fok-cell-area { font-weight: 500; }
+.fok-cell-area sup { font-size: 0.7em; }
+.fok-cell-rooms { width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; }
+.fok-cell-rooms.status-vilno { background-color: #28a745; color: white; }
+.fok-cell-rooms.status-prodano { background-color: #dc3545; color: white; }
+.fok-cell-rooms.status-zabronovano { background-color: #ffc107; color: #333; }
+.fok-cell-rooms.status-unknown { background-color: #e9ecef; color: #6c757d; }
+@media (max-width: 768px) {
+    .fok-apartment-cell {
+        width: 40px;
+        justify-content: center;
+    }
+    .fok-cell-area {
+        display: none;
+    }
+}
+
+/* --- ПАНЕЛЬ ДЕТАЛЕЙ --- */
+#fok-details-panel {
+    position: relative;
+    width: 280px;
+    flex-shrink: 0;
+    background: #fff;
+    border: 1px solid #e9e9e9;
+    border-radius: 8px;
+    transform: translateX(calc(100% + 40px));
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    overflow-y: auto;
+}
+#fok-details-panel.is-open {
+    transform: translateX(0);
+    opacity: 1;
+}
+#fok-panel-content {
+    padding: 50px 20px 20px 20px;
+    transition: opacity 0.3s ease;
+}
+#fok-panel-close {
+    position: absolute; top: 10px; right: 10px;
+    background: #f1f1f1; color: #555;
+    border: none; width: 30px; height: 30px;
+    border-radius: 50%; font-size: 24px; cursor: pointer;
+    z-index: 10; line-height: 1;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+}
+#fok-panel-close:hover { background: #e74c3c; color: white; transform: scale(1.1); }
+.fok-panel-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 20px; }
+.fok-panel-status { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; text-transform: uppercase; white-space: nowrap; }
+.fok-panel-status.status-vilno { background-color: #28a745; color: white; } .fok-panel-status.status-prodano { background-color: #dc3545; color: white; }
+.fok-panel-status.status-zabronovano { background-color: #ffc107; color: #333; } .fok-panel-status.status-unknown { background-color: #e9ecef; color: #6c757d; }
+.fok-panel-price { text-align: right; } .fok-panel-price .total-price { font-size: 16px; font-weight: bold; color: var(--fok-accent-color, #0073aa); }
+.fok-panel-price .price-per-m2 { font-size: 12px; color: #666; } .fok-panel-gallery .main-image { border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; height: 180px; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0; cursor: pointer; margin-bottom: 15px; }
+.fok-panel-gallery .main-image img { width: 100%; height: 100%; object-fit: cover; display: block; } .fok-panel-gallery .thumbnails { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 8px; margin-top: 8px; }
+.fok-panel-gallery .thumb { border: 2px solid transparent; border-radius: 6px; cursor: pointer; transition: border-color 0.2s; overflow: hidden; }
+.fok-panel-gallery .thumb.active, .fok-panel-gallery .thumb:hover { border-color: var(--fok-accent-color, #0073aa); } .fok-panel-gallery .thumb img { width: 100%; height: auto; display: block; }
+.fok-panel-params { list-style: none; padding: 0; margin: 20px 0; font-size: 14px; } .fok-panel-params li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+.fok-panel-params li:last-child { border-bottom: none; } .fok-panel-params li strong { color: #333; font-weight: 500; }
+.fok-booking-button, .fok-booking-btn-show { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; background-color: var(--fok-accent-color, #0073aa); color: #fff; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.2s; text-align: center; display: inline-block; box-sizing: border-box; }
+.fok-booking-button:hover, .fok-booking-btn-show:hover { background-color: #333; } .fok-booking-button:disabled { background-color: #999; cursor: not-allowed; }
+.fok-booking-form-wrapper { display: flex; flex-direction: column; height: 100%; }
+.fok-form-back-btn { background: none; border: none; color: #555; cursor: pointer; font-size: 13px; padding: 5px; margin-bottom: 20px; text-align: left; align-self: flex-start; }
+.fok-form-back-btn:hover { color: var(--fok-accent-color, #0073aa); } #fok-booking-form { display: flex; flex-direction: column; flex-grow: 1; }
+#fok-booking-form p { font-size: 18px; font-weight: 600; margin-top: 0; margin-bottom: 25px; text-align: center; } #fok-booking-form .form-group { margin-bottom: 15px; }
+#fok-booking-form label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 13px; } #fok-booking-form input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+#fok-booking-form .fok-booking-button { margin-top: auto; } #booking-form-message { margin-bottom: 15px; padding: 10px; border-radius: 6px; display: none; }
+#booking-form-message.success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; } #booking-form-message.error { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+
+
+/* --- АДАПТИВНІСТЬ --- */
+@media (max-width: 1365px) {
+    #fok-rc-title-wrapper { display: none; }
+    #fok-mobile-filter-trigger { display: flex; align-items:center; justify-content:center; }
+    
+    #fok-list-mode .fok-list-container {
+        position: static;
+    }
+    
+    #fok-list-mode .fok-list-results {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        box-sizing: border-box; 
+        overflow-y: auto; 
+        border: none;
+        background: none;
+    }
+
+    .fok-list-sidebar, #fok-details-panel {
+        position: fixed; top: 0;
+        width: 320px; max-width: 90%; height: 100%;
+        transition: transform 0.4s ease;
+        border-radius: 0;
+        z-index: 1101; 
+    }
+    .fok-list-sidebar { left: 0; transform: translateX(-100%); border-right: 1px solid #e0e0e0; }
+    .fok-list-sidebar.is-open { transform: translateX(0); }
+    #fok-details-panel { right: 0; transform: translateX(100%); border-left: 1px solid #e0e0e0; }
+    
+    #fok-sidebar-close { display: block; position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 28px; cursor: pointer; }
+}
+
+/* --- ІНШІ СТИЛІ: ЛАЙТБОКС, ЛОАДЕР --- */
+.fok-loader { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.7); display: none; align-items: center; justify-content: center; z-index: 10; }
+
+.fok-lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+.fok-lightbox-overlay.is-open { display: flex; }
+.fok-lightbox-content { max-width: 80%; max-height: 90%; object-fit: contain; }
+
+.fok-lightbox-control { background: rgba(30,30,30,0.6); color: #fff; border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; transition: background-color 0.2s; z-index: 10; position: absolute; display: flex; align-items: center; justify-content: center; font-size: 28px; line-height: 1; }
+.fok-lightbox-control:hover { background: rgba(0,0,0,0.8); }
+#fok-lightbox-close { top: 20px; right: 20px; }
+
+.fok-lightbox-nav {
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out;
+}
+.fok-lightbox-nav.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+#fok-lightbox-prev { left: 20px; }
+#fok-lightbox-next { right: 20px; }
+
+/* --- Стилі для перемикача статусу --- */
+.fok-toggle-filter {
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    margin-top: 15px;
+}
+.fok-toggle-switch {
+    position: relative;
+    display: inline-flex; 
+    align-items: center;
     cursor: pointer;
+    gap: 12px; 
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.fok-toggle-switch input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+.fok-toggle-slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background-color: #ccc;
+    border-radius: 24px;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+    border: none;
+}
+.fok-toggle-slider::before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-shadow: none;
+}
+.fok-toggle-label {
+    font-weight: 500;
+    font-size: 15px;
+    color: #333;
     line-height: 1;
 }
-.fok-lightbox-close:hover {
-    color: #bbb;
+.fok-toggle-switch input:checked + .fok-toggle-slider {
+    background-color: var(--fok-accent-color, #28a745);
+    border-color: transparent;
+}
+.fok-toggle-switch input:checked + .fok-toggle-slider::before {
+    transform: translateX(20px);
+}
+
+/* --- Стилі для прелоадерів (виправлена версія) --- */
+@keyframes fok-spin {
+    to { transform: rotate(360deg); }
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: var(--fok-accent-color, #0073aa);
+    border-radius: 50%;
+    animation: fok-spin 1s linear infinite;
+}
+.fok-list-results .fok-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.5);
+    border: none;
+    animation: none;
+}
+
+.fok-panel-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    border-radius: 8px;
+    border: none;
+    animation: none;
+}
+
+/* 1. Стилізація фільтра за типом нерухомості */
+.fok-filter-property-types {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 15px;
+}
+
+.fok-checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.fok-checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.fok-checkbox-group input[type="checkbox"] {
+    /* 1. Скидаємо стандартний вигляд, щоб прибрати галочку */
+    -webkit-appearance: none;
+    appearance: none;
+
+    /* 2. Задаємо розміри нашого кастомного квадратика */
+    width: 1.2em;
+    height: 1.2em;
+
+    /* 3. Стилізуємо стан "не обрано" - порожній квадратик */
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+
+    /* 4. Вертикальне вирівнювання, щоб він стояв на одній лінії з текстом */
+    vertical-align: middle;
+    position: relative;
+    top: -0.1em;
+
+    /* 5. Плавний перехід кольору для краси */
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+/* Стилізуємо стан "обрано" */
+.fok-checkbox-group input[type="checkbox"]:checked {
+    /* Зафарбовуємо фон нашим кастомним кольором */
+    background-color: var(--fok-accent-color, #0073aa);
+    /* Робимо рамку такого ж кольору */
+    border-color: var(--fok-accent-color, #0073aa);
+}
+
+/* (Опціонально) Додаємо стиль для фокусу, для доступності */
+.fok-checkbox-group input[type="checkbox"]:focus-visible {
+     outline: 2px solid #007cba;
+     outline-offset: 2px;
+}
+
+
+/* 2. Стилізація іконок типів в клітинках "шахматки" */
+.fok-cell-icon {
+    font-size: 14px;
+    font-weight: bold;
+    color: inherit; /* Успадковує колір від батьківського .fok-cell-rooms */
+}
+
+/* 3. Опціонально: можна додати різні фони для різних типів нерухомості */
+/* Наприклад, щоб візуально відрізняти їх на шахматці */
+.fok-apartment-cell.cell-type-commercial_property {
+    background-color: #e9f5ff; /* Світло-синій */
+}
+
+.fok-apartment-cell.cell-type-parking_space {
+    background-color: #f0f0f0; /* Світло-сірий */
+}
+
+.fok-apartment-cell.cell-type-storeroom {
+    background-color: #fff8e1; /* Світло-жовтий */
+}
+
+.fok-apartment-cell.cell-type-commercial_property:hover,
+.fok-apartment-cell.cell-type-parking_space:hover,
+.fok-apartment-cell.cell-type-storeroom:hover {
+     border-color: var(--fok-accent-color, #0073aa);
+}
+
+
+/* 4. Стилізація заголовку в панелі деталей */
+#fok-details-panel .fok-panel-header {
+    display: grid;
+    grid-template-areas: 
+        "title status"
+        "price price";
+    align-items: center;
+    gap: 5px 15px;
+    margin-bottom: 15px;
+}
+
+#fok-details-panel .fok-panel-header h3 {
+    grid-area: title;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.2;
+}
+
+#fok-details-panel .fok-panel-status {
+    grid-area: status;
+    justify-self: end;
+}
+
+#fok-details-panel .fok-panel-price {
+    grid-area: price;
+    text-align: left;
+    margin-top: 5px;
+}
+
+/*
+ * Стилі для блоку "статус-ціна" під галереєю
+ */
+.fok-panel-info {
+    display: flex;                  /* Головна властивість, що ставить елементи в ряд */
+    justify-content: space-between; /* Розносить елементи по краях (статус зліва, ціна справа) */
+    align-items: center;            /* Вирівнює їх по вертикалі, якщо вони різної висоти */
+    gap: 15px;                      /* Відстань між елементами, якщо вони будуть близько */
+    padding: 15px 0;                /* Внутрішні відступи зверху та знизу */
+    border-bottom: 1px solid #eee;  /* Лінія-розділювач під блоком */
+    margin-bottom: 15px;            /* Зовнішній відступ знизу */
+}
+
+/* Стилі для блоку з ціною, щоб текст був вирівняний по правому краю */
+.fok-panel-price {
+    text-align: right;
+}
+
+/* Зробимо загальну ціну трохи більшою */
+.fok-panel-price .total-price {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+/* А ціну за метр - меншою і сірішою */
+.fok-panel-price .price-per-m2 {
+    font-size: 0.7em;
+    color: #6c757d;
 }
