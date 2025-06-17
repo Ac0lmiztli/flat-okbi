@@ -148,6 +148,7 @@ function fok_render_viewer_shortcode() {
 function fok_enqueue_frontend_assets() {
     wp_enqueue_style( 'dashicons' );
     wp_enqueue_style('fok-frontend-style', plugin_dir_url( __FILE__ ) . 'assets/css/frontend-style.css', [], '2.2.0');
+    wp_enqueue_script('fabric-js', 'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js', array(), '5.3.1', true);
     wp_enqueue_script('fok-frontend-script', plugin_dir_url( __FILE__ ) . 'assets/js/frontend-script.js', ['jquery'], '2.2.0', true);
     wp_localize_script( 'fok-frontend-script', 'fok_ajax', ['ajax_url' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'fok_viewer_nonce' )]);
 }
@@ -377,6 +378,45 @@ function fok_get_property_details_ajax_handler() {
         }
     }
     $data['gallery'] = $gallery;
+
+    wp_send_json_success( $data );
+}
+
+add_action( 'wp_ajax_fok_get_genplan_data', 'fok_get_genplan_data_ajax_handler' );
+add_action( 'wp_ajax_nopriv_fok_get_genplan_data', 'fok_get_genplan_data_ajax_handler' );
+
+function fok_get_genplan_data_ajax_handler() {
+    check_ajax_referer( 'fok_viewer_nonce', 'nonce' );
+
+    if ( ! isset( $_POST['rc_id'] ) ) {
+        wp_send_json_error( 'Відсутній ID ЖК.' );
+    }
+    $rc_id = absint( $_POST['rc_id'] );
+
+    $genplan_image_id = get_post_meta($rc_id, '_fok_rc_genplan_image', true);
+    $genplan_polygons_json = get_post_meta($rc_id, '_fok_rc_genplan_polygons', true);
+
+    if ( ! $genplan_image_id || ! $genplan_polygons_json ) {
+        wp_send_json_error( 'Для цього ЖК не налаштовано інтерактивний генплан.' );
+    }
+
+    $image_url = wp_get_attachment_image_url($genplan_image_id, 'full');
+    $polygons_data = json_decode($genplan_polygons_json, true);
+
+    // Додамо назви секцій до даних
+    if (is_array($polygons_data)) {
+        foreach ($polygons_data as $key => $polygon) {
+            $section_id = (int) $polygon['section_id'];
+            if ($section_id) {
+                $polygons_data[$key]['section_name'] = get_the_title($section_id);
+            }
+        }
+    }
+
+    $data = [
+        'image_url' => $image_url,
+        'polygons'  => $polygons_data,
+    ];
 
     wp_send_json_success( $data );
 }
@@ -659,6 +699,8 @@ function fok_render_notification_email_field() {
     echo '<p class="description">' . __('Вкажіть email для отримання заявок. Якщо залишити порожнім, буде використано email адміністратора.', 'okbi-apartments') . '</p>';
 }
 
+
+
 function fok_enqueue_admin_scripts( $hook ) {
     $current_screen = get_current_screen();
 
@@ -669,7 +711,7 @@ function fok_enqueue_admin_scripts( $hook ) {
         wp_enqueue_script('fok-admin-script', plugin_dir_url( __FILE__ ) . 'assets/js/admin-settings.js', array( 'wp-color-picker', 'jquery' ), '1.2.0', true);
     }
     
-    // Перевіряємо, чи ми на сторінці редагування або створення запису
+    // Виходимо, якщо це не сторінка редагування запису
     if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
         return;
     }
@@ -683,22 +725,75 @@ function fok_enqueue_admin_scripts( $hook ) {
         $current_post_type = get_post_type( $post_id );
     }
 
-    // Наші цільові типи записів
-    $property_post_types = ['apartment', 'commercial_property', 'parking_space', 'storeroom'];
-
-    // Перевіряємо, чи поточний тип запису є одним з цільових
-    if ( in_array( $current_post_type, $property_post_types ) ) {
+    // --- Логіка для інтерактивного редактора генплану ---
+    if ( $current_post_type === 'residential_complex' ) {
+        // 1. Підключаємо бібліотеку Fabric.js
+        wp_enqueue_script(
+            'fabric-js',
+            'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js',
+            array(),
+            '5.3.1',
+            true
+        );
         
-        // Якщо так, підключаємо наш скрипт логіки
+        // 2. Підключаємо стилі для редактора
+        wp_enqueue_style(
+            'fok-admin-interactive-style',
+            plugin_dir_url( __FILE__ ) . 'assets/css/admin-interactive.css',
+            array(),
+            time()
+        );
+
+        // 3. Підключаємо наш скрипт, вказавши залежність від 'fabric-js'
+        wp_enqueue_script(
+            'fok-admin-interactive-rc-script',
+            plugin_dir_url( __FILE__ ) . 'assets/js/admin-interactive-rc.js',
+            array('jquery', 'fabric-js'), // ВИПРАВЛЕНО: додано залежність
+            time(),
+            true
+        );
+    }
+
+    // --- Логіка для редактора поверхів у Секціях ---
+    if ( $current_post_type === 'section' ) {
+        // 1. Підключаємо бібліотеку Fabric.js
+        wp_enqueue_script(
+            'fabric-js',
+            'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js',
+            array(),
+            '5.3.1',
+            true
+        );
+        
+        // 2. Використовуємо ті ж стилі, що й для генплану
+        wp_enqueue_style(
+            'fok-admin-interactive-style',
+            plugin_dir_url( __FILE__ ) . 'assets/css/admin-interactive.css',
+            array(),
+            time()
+        );
+
+        // 3. Підключаємо НОВИЙ скрипт для редактора секцій
+        wp_enqueue_script(
+            'fok-admin-interactive-section-script',
+            plugin_dir_url( __FILE__ ) . 'assets/js/admin-interactive-section.js',
+            array('jquery', 'fabric-js'),
+            time(),
+            true
+        );
+    }
+    
+    // --- Логіка для інших типів записів ---
+    $property_post_types = ['apartment', 'commercial_property', 'parking_space', 'storeroom'];
+    if ( in_array( $current_post_type, $property_post_types ) ) {
         $script_path = plugin_dir_url( __FILE__ ) . 'assets/js/admin-logic.js';
         wp_enqueue_script( 'fok-admin-logic', $script_path, [ 'jquery', 'select2' ], '1.0.2', true );
-        
-        // Передаємо в скрипт текст, який він використовує.
         wp_localize_script( 'fok-admin-logic', 'fok_admin_ajax', [
             'select_text' => __( 'Оберіть секцію...', 'okbi-apartments' ),
         ] );
     }
 }
+
 add_action( 'admin_enqueue_scripts', 'fok_enqueue_admin_scripts' );
 
 function fok_sanitize_settings( $input ) { 
