@@ -1,0 +1,185 @@
+/* Стилі для контейнера редактора генплану */
+#fok-genplan-editor-wrapper {
+    position: relative;
+    border: 1px solid #ccd0d4;
+    margin-top: 10px;
+    padding: 15px;
+    background: #fdfdfd;
+}
+
+#fok-genplan-editor-wrapper h4 {
+    margin-top: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Стилі для контейнера canvas */
+#fok-genplan-canvas-container {
+    margin-top: 15px;
+    border: 1px dashed #c1c1c1;
+    max-width: 100%;
+}
+
+/* Сам canvas буде керуватися через JS, але можна додати стилі для завантажувача */
+.fok-canvas-loader {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Стилі для панелі керування */
+#fok-genplan-controls {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+#fok-genplan-controls .fok-control-group {
+    display: flex;
+    flex-direction: column;
+}
+
+#fok-genplan-controls label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+#fok-polygon-section-link {
+    min-width: 200px;
+}
+
+/* Стилі для списку готових полігонів */
+#fok-polygon-list {
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+#fok-polygon-list h4 {
+    margin-bottom: 10px;
+}
+
+#fok-polygon-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#fok-polygon-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+#fok-polygon-list li:hover,
+#fok-polygon-list li.fok-active-polygon-item {
+     border-color: #007cba;
+     background: #f0f6fa;
+}
+
+#fok-polygon-list .fok-delete-polygon {
+    color: #d63638;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#fok-polygon-list .fok-delete-polygon:hover {
+    color: #a02224;
+}
+
+/* --- Стилі для модального вікна редактора поверхів --- */
+#fok-floor-editor-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#fok-floor-editor-modal .fok-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+#fok-floor-editor-modal .fok-modal-content {
+    position: relative;
+    background: #fdfdfd;
+    width: 90%;
+    max-width: 1200px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+}
+
+#fok-floor-editor-modal .fok-modal-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 5px;
+    color: #666;
+}
+#fok-floor-editor-modal .fok-modal-close:hover {
+    color: #000;
+}
+
+#fok-floor-editor-modal .fok-modal-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+#fok-floor-editor-modal .fok-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+#fok-floor-editor-modal .fok-modal-body {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    gap: 20px;
+    overflow: hidden;
+}
+
+#fok-floor-canvas-controls {
+    flex-basis: 250px;
+    flex-shrink: 0;
+}
+
+#fok-floor-canvas-container {
+    flex-grow: 1;
+    border: 1px dashed #ccc;
+    min-width: 0; /* Важливо для flexbox */
+}
+
+#fok-floor-editor-modal .fok-modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+}
+
+#fok-floor-property-link {
+    width: 100%;
+}
