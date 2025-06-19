@@ -36,7 +36,7 @@ function fok_render_importer_page() {
                 <hr>
                 <p><strong><?php _e( 'Крок 2: Завантажте файл', 'okbi-apartments' ); ?></strong></p>
                 <form method="post" enctype="multipart/form-data">
-                    <?php wp_nonce_field( 'fok_import_nonce_action', 'fok_import_nonce' ); ?>
+                    <?php wp_nonce_field( 'fok_import_nonce_action', 'fok_import_nonce', true, false ); ?>
                      <input type="file" name="properties_csv" accept=".csv, text/csv">
                     <?php submit_button( __( 'Почати імпорт', 'okbi-apartments' ), 'primary', 'submit-import' ); ?>
                 </form>
@@ -45,7 +45,7 @@ function fok_render_importer_page() {
                 <h2 class="title"><?php _e( 'Експорт в CSV', 'okbi-apartments' ); ?></h2>
                 <p><?php _e('Ви можете вивантажити дані по всій нерухомості або по конкретному ЖК та типах.', 'okbi-apartments'); ?></p>
                 <form method="post">
-                     <?php wp_nonce_field( 'fok_export_nonce_action', 'fok_export_nonce' ); ?>
+                     <?php wp_nonce_field( 'fok_export_nonce_action', 'fok_export_nonce', true, false ); ?>
                     <table class="form-table">
                          <tr valign="top">
                             <th scope="row"><label for="fok_export_rc_id"><?php _e('Виберіть ЖК', 'okbi-apartments'); ?></label></th>
