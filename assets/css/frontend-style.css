@@ -175,26 +175,24 @@ body.fok-viewer-is-open {
 .fok-section-block h4 { margin: 0; padding-bottom: 10px; line-height: 1.2; font-weight: 600; font-size: 16px; white-space: nowrap; }
 .fok-section-grid { display: flex; }
 .fok-floor-labels { display: flex; flex-direction: column-reverse; padding-right: 15px; }
-.fok-floor-label { height: 42px; display: flex; align-items: center; justify-content: flex-end; font-weight: 500; color: #555; box-sizing: border-box; }
+.fok-floor-label { height: 48px; display: flex; align-items: center; justify-content: flex-end; font-weight: 500; color: #555; box-sizing: border-box; }
 .fok-floor-row-container { display: flex; flex-direction: column-reverse; }
-.fok-floor-row { display: flex; height: 42px; align-items: center; }
-.fok-apartment-cell { width: 90px; height: 40px; border: 1px solid #ccc; margin: 1px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; cursor: pointer; transition: border-color 0.2s, background-color 0.2s, transform 0.2s; background-color: #f8f9fa; border-radius: 4px; box-sizing: border-box; padding: 0 8px; color: #333; }
+.fok-floor-row { display: flex; height: 48px; align-items: center; }
+.fok-apartment-cell { width: 110px; height: 40px; border: 1px solid #ccc; margin: 4px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; cursor: pointer; transition: border-color 0.2s, background-color 0.2s, transform 0.2s; background-color: #f8f9fa; border-radius: 4px; box-sizing: border-box; padding: 0 8px; color: #333; }
 .fok-apartment-cell.active, .fok-apartment-cell:hover { border-color: var(--fok-accent-color, #0073aa); background-color: #eef7ff; z-index: 5; transform: scale(1.03); }
 .fok-cell-area { font-weight: 500; }
 .fok-cell-area sup { font-size: 0.7em; }
 .fok-cell-rooms { width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; }
-.fok-cell-rooms.status-vilno { background-color: #28a745; color: white; }
-.fok-cell-rooms.status-prodano { background-color: #dc3545; color: white; }
-.fok-cell-rooms.status-zabronovano { background-color: #ffc107; color: #333; }
+.fok-cell-rooms.status-vilno { background-color: #6D972E; color: white; }
+.fok-cell-rooms.status-prodano { background-color: #E45545; color: white; }
+.fok-cell-rooms.status-zabronovano { background-color: #FAD074; color: #333; }
 .fok-cell-rooms.status-unknown { background-color: #e9ecef; color: #6c757d; }
 @media (max-width: 768px) {
-    .fok-apartment-cell {
-        width: 40px;
-        justify-content: center;
-    }
-    .fok-cell-area {
-        display: none;
-    }
+    .fok-apartment-cell { width: 40px; justify-content: center; }
+    .fok-apartment-cell { margin: 1px; }
+    .fok-floor-label { height: 42px; }
+    .fok-floor-row { height: 42px; }
+    .fok-cell-area { display: none; }
 }
 
 /* --- ПАНЕЛЬ ДЕТАЛЕЙ --- */
@@ -485,7 +483,7 @@ body.fok-viewer-is-open {
 /* 3. Опціонально: можна додати різні фони для різних типів нерухомості */
 /* Наприклад, щоб візуально відрізняти їх на шахматці */
 .fok-apartment-cell.cell-type-commercial_property {
-    background-color: #e9f5ff; /* Світло-синій */
+    background-color: #fff4fc; /* Світло-рожевий */
 }
 
 .fok-apartment-cell.cell-type-parking_space {
@@ -493,7 +491,7 @@ body.fok-viewer-is-open {
 }
 
 .fok-apartment-cell.cell-type-storeroom {
-    background-color: #fff8e1; /* Світло-жовтий */
+    background-color: #f8f9fa; /* Світло-сірий з відтінком */
 }
 
 .fok-apartment-cell.cell-type-commercial_property:hover,
@@ -561,4 +559,111 @@ body.fok-viewer-is-open {
 .fok-panel-price .price-per-m2 {
     font-size: 0.7em;
     color: #6c757d;
+}
+
+/* --- Стилі для інтерактивного режиму генплану --- */
+#fok-interactive-mode.active {
+    padding: 40px;
+    box-sizing: border-box;
+    height: 100%;
+    overflow-y: auto; /* Додаємо вертикальну прокрутку, якщо контент не влазить */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Вирівнюємо по верху, а не по центру */
+}
+
+#fok-interactive-canvas-container {
+    width: 100%; /* Контейнер має займати 100% ширини батьківського елемента */
+    max-width: 1200px; /* Але не більше 1200px, щоб не було занадто великим на широких екранах */
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* --- Покращені стилі для панелі деталей --- */
+
+/* Заголовок об'єкта */
+.fok-panel-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    line-height: 1.3;
+}
+
+/* Новий інформаційний блок (статус + ціна) */
+.fok-panel-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 0;
+    border-top: 1px solid #eef2f5;
+    border-bottom: 1px solid #eef2f5;
+    margin-bottom: 15px;
+}
+
+.fok-panel-price {
+    text-align: right;
+}
+
+.fok-panel-price .total-price {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--fok-accent-color, #0073aa);
+}
+
+.fok-panel-price .price-per-m2 {
+    font-size: 0.8em;
+    color: #7f8c8d;
+}
+
+/* Покращення для списку параметрів */
+.fok-panel-params {
+    margin-top: 0;
+}
+.fok-panel-params li {
+    padding: 12px 5px;
+}
+.fok-panel-params li span {
+    color: #7f8c8d;
+}
+.fok-panel-params li strong {
+    font-weight: 600;
+}
+
+/* Покращення для галереї */
+.fok-panel-gallery .main-image {
+    border-radius: 6px;
+    margin-bottom: 10px;
+    height: 200px;
+}
+.fok-panel-gallery .thumbnails {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Блок з кнопкою */
+.fok-panel-actions {
+    margin-top: 20px;
+}
+
+/* Додаємо плавний перехід для властивостей, які будемо змінювати */
+.fok-apartment-cell {
+    /* ... ваші існуючі стилі ... */
+    transition: opacity 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Новий клас для відфільтрованих (неактивних) елементів */
+.fok-apartment-cell.is-filtered {
+    opacity: 0.35;
+    background-color: #f0f2f5;
+    cursor: not-allowed;
+    pointer-events: none; /* Робить елемент неклікабельним */
+}
+
+/* Можна також приглушити колір статусу */
+.fok-apartment-cell.is-filtered .fok-cell-rooms {
+    background-color: #adb5bd;
+    color: #fff;
 }
