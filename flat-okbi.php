@@ -3,7 +3,7 @@
  * Plugin Name:         Flat Okbi
  * Plugin URI:          https://okbi.pp.ua
  * Description:         Плагін для керування каталогом квартир та житлових комплексів.
- * Version:             2.2.0
+ * Version:             2.2.1
  * Requires at least:   5.2
  * Requires PHP:        7.2
  * Author:              Okbi
@@ -60,18 +60,10 @@ function fok_render_viewer_shortcode() {
                  <button id="fok-mobile-filter-trigger" title="<?php esc_attr_e('Фільтри', 'okbi-apartments'); ?>">
                     <span class="dashicons dashicons-filter"></span>
                 </button>
-                <div class="fok-view-modes">
-                    <button data-mode="list" class="active" title="<?php esc_attr_e( 'Режим списку', 'okbi-apartments' ); ?>"><span class="dashicons dashicons-list-view"></span></button>
-                    <button data-mode="interactive" title="<?php esc_attr_e( 'Інтерактивний режим', 'okbi-apartments' ); ?>"><span class="dashicons dashicons-location-alt"></span></button>
-                </div>
             </div>
         </header>
 
         <main class="fok-viewer-content">
-            <div id="fok-interactive-mode">
-                <h2><?php _e( 'Інтерактивний режим', 'okbi-apartments' ); ?></h2>
-                <p><?php _e( 'Тут буде візуалізація генплану...', 'okbi-apartments' ); ?></p>
-            </div>
             <div id="fok-list-mode" class="active">
                 <div class="fok-list-container">
                     <aside class="fok-list-sidebar">
@@ -147,9 +139,9 @@ function fok_render_viewer_shortcode() {
 
 function fok_enqueue_frontend_assets() {
     wp_enqueue_style( 'dashicons' );
-    wp_enqueue_style('fok-frontend-style', plugin_dir_url( __FILE__ ) . 'assets/css/frontend-style.css', [], '2.2.0');
+    wp_enqueue_style('fok-frontend-style', plugin_dir_url( __FILE__ ) . 'assets/css/frontend-style.css', [], time());
     wp_enqueue_script('fabric-js', 'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js', array(), '5.3.1', true);
-    wp_enqueue_script('fok-frontend-script', plugin_dir_url( __FILE__ ) . 'assets/js/frontend-script.js', ['jquery'], '2.2.0', true);
+    wp_enqueue_script('fok-frontend-script', plugin_dir_url( __FILE__ ) . 'assets/js/frontend-script.js', ['jquery', 'fabric-js'], time(), true);
     wp_localize_script( 'fok-frontend-script', 'fok_ajax', ['ajax_url' => admin_url( 'admin-ajax.php' ), 'nonce' => wp_create_nonce( 'fok_viewer_nonce' )]);
 }
 
@@ -159,58 +151,35 @@ add_action( 'wp_ajax_fok_filter_properties', 'fok_filter_properties_ajax_handler
 add_action( 'wp_ajax_nopriv_fok_filter_properties', 'fok_filter_properties_ajax_handler' );
 
 function fok_filter_properties_ajax_handler() {
-    check_ajax_referer( 'fok_viewer_nonce', 'nonce' );
+    // Перевіряємо nonce, але більше не перевіряємо дані форми, бо вони не потрібні
+    check_ajax_referer('fok_viewer_nonce', 'nonce');
 
     $rc_id = isset($_POST['rc_id']) ? intval($_POST['rc_id']) : 0;
-    if ( !$rc_id ) {
+    if (!$rc_id) {
         wp_send_json_error('ID житлового комплексу не вказано.');
     }
-    
+
     $rc_post = get_post($rc_id);
     $rc_title = $rc_post ? $rc_post->post_title : '';
 
-    parse_str($_POST['form_data'], $form_data);
-    
-    $property_types = isset($form_data['property_types']) && is_array($form_data['property_types']) 
-        ? array_map('sanitize_key', $form_data['property_types']) 
-        : ['apartment', 'commercial_property', 'parking_space', 'storeroom'];
-    
-    if(empty($property_types)){
-        wp_send_json_success(['html' => '<p>' . __('Будь ласка, оберіть тип нерухомості.', 'okbi-apartments') . '</p>', 'rc_title' => $rc_title]);
-    }
+    // --- ГОЛОВНА ЗМІНА: Ми отримуємо ВСІ типи нерухомості для цього ЖК ---
+    $property_types = ['apartment', 'commercial_property', 'parking_space', 'storeroom'];
 
     $args = [
-        'post_type' => $property_types, 
+        'post_type' => $property_types,
         'posts_per_page' => -1,
-        'meta_query' => ['relation' => 'AND'],
-        'orderby' => ['meta_value_num' => 'ASC'],
+        'meta_query' => [
+            [
+                'key' => 'fok_property_rc_link',
+                'value' => $rc_id
+            ]
+        ],
+        'orderby' => ['meta_value_num' => 'ASC'], // Сортування по поверху
+        'meta_key' => 'fok_property_floor',
     ];
 
-    $args['meta_query']['floor_meta'] = ['key' => 'fok_property_floor', 'type' => 'NUMERIC'];
-    $args['meta_query'][] = ['key' => 'fok_property_rc_link', 'value' => $rc_id];
-    
-    // Common filters
-    if ( !empty($form_data['area_from']) ) { $args['meta_query'][] = ['key' => 'fok_property_area', 'value' => floatval($form_data['area_from']), 'type' => 'DECIMAL(10,2)', 'compare' => '>=']; }
-    if ( !empty($form_data['area_to']) ) { $args['meta_query'][] = ['key' => 'fok_property_area', 'value' => floatval($form_data['area_to']), 'type' => 'DECIMAL(10,2)', 'compare' => '<=']; }
-    if ( !empty($form_data['floor_from']) ) { $args['meta_query'][] = ['key' => 'fok_property_floor', 'value' => intval($form_data['floor_from']), 'type' => 'NUMERIC', 'compare' => '>=']; }
-    if ( !empty($form_data['floor_to']) ) { $args['meta_query'][] = ['key' => 'fok_property_floor', 'value' => intval($form_data['floor_to']), 'type' => 'NUMERIC', 'compare' => '<=']; }
-    
-    // Apartment-specific filter
-    if ( in_array('apartment', $property_types) && !empty($form_data['rooms']) ) {
-        $compare = ($form_data['rooms'] === '3') ? '>=' : '=';
-        $args['meta_query'][] = [
-            'relation' => 'OR',
-            [ 'key' => 'fok_property_rooms', 'value' => intval($form_data['rooms']), 'type' => 'NUMERIC', 'compare' => $compare ],
-            [ 'key' => 'fok_property_rooms', 'compare' => 'NOT EXISTS' ]
-        ];
-    }
-    
-    if ( !empty($form_data['status']) ) { 
-        $args['tax_query'] = [['taxonomy' => 'status', 'field' => 'slug', 'terms' => sanitize_text_field($form_data['status'])]]; 
-    }
-    
     $query = new WP_Query($args);
-    
+
     $sections_data = [];
     if ($query->have_posts()) {
         while ($query->have_posts()) {
@@ -219,92 +188,38 @@ function fok_filter_properties_ajax_handler() {
             $post_type = get_post_type($property_id);
             $section_id = get_post_meta($property_id, 'fok_property_section_link', true);
             $floor = (int)get_post_meta($property_id, 'fok_property_floor', true);
-            
+
             if (!$section_id) continue;
 
+            // Створюємо секцію, якщо її ще немає в нашому масиві
             if (!isset($sections_data[$section_id])) {
                 $section_post = get_post($section_id);
-                $sections_data[$section_id] = ['name' => $section_post ? $section_post->post_title : __('Невідома секція', 'okbi-apartments'), 'floors' => []];
+                $sections_data[$section_id] = [
+                    'name' => $section_post ? $section_post->post_title : __('Невідома секція', 'okbi-apartments'),
+                    'floors' => []
+                ];
             }
-            
+
             $status_terms = get_the_terms($property_id, 'status');
             $status_slug = !is_wp_error($status_terms) && !empty($status_terms) ? $status_terms[0]->slug : 'unknown';
-            
+
+            // Збираємо повний набір даних про кожен об'єкт для фільтрації на фронтенді
             $property_data = [
                 'id' => $property_id,
                 'type' => $post_type,
-                'area' => get_post_meta($property_id, 'fok_property_area', true),
-                'status' => $status_slug
+                'area' => (float) get_post_meta($property_id, 'fok_property_area', true),
+                'floor' => $floor,
+                'status' => $status_slug,
+                'rooms' => ($post_type === 'apartment') ? (int)get_post_meta($property_id, 'fok_property_rooms', true) : 0,
             ];
 
-            if ($post_type === 'apartment') {
-                $property_data['rooms'] = (int)get_post_meta($property_id, 'fok_property_rooms', true);
-            }
-            
             $sections_data[$section_id]['floors'][$floor][] = $property_data;
         }
     }
     wp_reset_postdata();
 
-    ob_start();
-    if (!empty($sections_data)) {
-        echo '<div class="fok-chessboard">';
-        foreach ($sections_data as $section_id => $section) {
-            if (empty($section['floors'])) continue;
-            
-            echo '<div class="fok-section-block">';
-            echo '<h4>' . esc_html($section['name']) . '</h4>';
-            echo '<div class="fok-section-grid">';
-            
-            $existing_floors = array_keys($section['floors']);
-            sort($existing_floors, SORT_NUMERIC);
-
-            echo '<div class="fok-floor-labels">';
-            foreach ($existing_floors as $floor_num) {
-                echo '<div class="fok-floor-label">' . $floor_num . '</div>';
-            }
-            echo '</div>';
-            
-            echo '<div class="fok-floor-row-container">';
-            foreach ($existing_floors as $floor_num) {
-                echo '<div class="fok-floor-row">';
-                foreach ($section['floors'][$floor_num] as $property) {
-                    $cell_content = '';
-                    $cell_class = 'fok-apartment-cell cell-type-' . esc_attr($property['type']);
-                    
-                    switch ($property['type']) {
-                        case 'apartment':
-                            $cell_content = esc_html($property['rooms']);
-                            break;
-                        case 'commercial_property':
-                            $cell_content = '<span class="fok-cell-icon" title="' . esc_attr__('Комерція', 'okbi-apartments') . '">К</span>';
-                            break;
-                        case 'parking_space':
-                             $cell_content = '<span class="fok-cell-icon" title="' . esc_attr__('Паркінг', 'okbi-apartments') . '">П</span>';
-                            break;
-                        case 'storeroom':
-                             $cell_content = '<span class="fok-cell-icon" title="' . esc_attr__('Комора', 'okbi-apartments') . '">Т</span>'; // Removed "M"
-                            break;
-                    }
-
-                    echo '<div class="' . $cell_class . '" data-id="' . esc_attr($property['id']) . '">';
-                    echo '<span class="fok-cell-area">' . esc_html($property['area']) . ' м&sup2;</span>';
-                    echo '<span class="fok-cell-rooms status-' . esc_attr($property['status']) . '">' . $cell_content . '</span>';
-                    echo '</div>';
-                }
-                echo '</div>';
-            }
-            echo '</div>'; 
-            
-            echo '</div>'; 
-            echo '</div>'; 
-        }
-        echo '</div>'; 
-    } else {
-        echo '<p>' . __('Об\'єктів за вашими критеріями не знайдено.', 'okbi-apartments') . '</p>';
-    }
-    $html = ob_get_clean();
-    wp_send_json_success(['html' => $html, 'rc_title' => $rc_title]);
+    // Замість HTML, відправляємо JSON
+    wp_send_json_success(['sections' => $sections_data, 'rc_title' => $rc_title]);
 }
 
 
@@ -382,45 +297,6 @@ function fok_get_property_details_ajax_handler() {
     wp_send_json_success( $data );
 }
 
-add_action( 'wp_ajax_fok_get_genplan_data', 'fok_get_genplan_data_ajax_handler' );
-add_action( 'wp_ajax_nopriv_fok_get_genplan_data', 'fok_get_genplan_data_ajax_handler' );
-
-function fok_get_genplan_data_ajax_handler() {
-    check_ajax_referer( 'fok_viewer_nonce', 'nonce' );
-
-    if ( ! isset( $_POST['rc_id'] ) ) {
-        wp_send_json_error( 'Відсутній ID ЖК.' );
-    }
-    $rc_id = absint( $_POST['rc_id'] );
-
-    $genplan_image_id = get_post_meta($rc_id, '_fok_rc_genplan_image', true);
-    $genplan_polygons_json = get_post_meta($rc_id, '_fok_rc_genplan_polygons', true);
-
-    if ( ! $genplan_image_id || ! $genplan_polygons_json ) {
-        wp_send_json_error( 'Для цього ЖК не налаштовано інтерактивний генплан.' );
-    }
-
-    $image_url = wp_get_attachment_image_url($genplan_image_id, 'full');
-    $polygons_data = json_decode($genplan_polygons_json, true);
-
-    // Додамо назви секцій до даних
-    if (is_array($polygons_data)) {
-        foreach ($polygons_data as $key => $polygon) {
-            $section_id = (int) $polygon['section_id'];
-            if ($section_id) {
-                $polygons_data[$key]['section_name'] = get_the_title($section_id);
-            }
-        }
-    }
-
-    $data = [
-        'image_url' => $image_url,
-        'polygons'  => $polygons_data,
-    ];
-
-    wp_send_json_success( $data );
-}
-
 add_action( 'wp_ajax_fok_submit_booking', 'fok_handle_booking_request' );
 add_action( 'wp_ajax_nopriv_fok_submit_booking', 'fok_handle_booking_request' );
 
@@ -459,7 +335,6 @@ function fok_handle_booking_request() {
         wp_send_json_error( 'Помилка відправки. Спробуйте пізніше.' );
     }
 }
-
 
 // --- Адміністративна частина ---
 
@@ -727,15 +602,6 @@ function fok_enqueue_admin_scripts( $hook ) {
 
     // --- Логіка для інтерактивного редактора генплану ---
     if ( $current_post_type === 'residential_complex' ) {
-        // 1. Підключаємо бібліотеку Fabric.js
-        wp_enqueue_script(
-            'fabric-js',
-            'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js',
-            array(),
-            '5.3.1',
-            true
-        );
-        
         // 2. Підключаємо стилі для редактора
         wp_enqueue_style(
             'fok-admin-interactive-style',
@@ -754,35 +620,6 @@ function fok_enqueue_admin_scripts( $hook ) {
         );
     }
 
-    // --- Логіка для редактора поверхів у Секціях ---
-    if ( $current_post_type === 'section' ) {
-        // 1. Підключаємо бібліотеку Fabric.js
-        wp_enqueue_script(
-            'fabric-js',
-            'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js',
-            array(),
-            '5.3.1',
-            true
-        );
-        
-        // 2. Використовуємо ті ж стилі, що й для генплану
-        wp_enqueue_style(
-            'fok-admin-interactive-style',
-            plugin_dir_url( __FILE__ ) . 'assets/css/admin-interactive.css',
-            array(),
-            time()
-        );
-
-        // 3. Підключаємо НОВИЙ скрипт для редактора секцій
-        wp_enqueue_script(
-            'fok-admin-interactive-section-script',
-            plugin_dir_url( __FILE__ ) . 'assets/js/admin-interactive-section.js',
-            array('jquery', 'fabric-js'),
-            time(),
-            true
-        );
-    }
-    
     // --- Логіка для інших типів записів ---
     $property_post_types = ['apartment', 'commercial_property', 'parking_space', 'storeroom'];
     if ( in_array( $current_post_type, $property_post_types ) ) {
@@ -803,3 +640,64 @@ function fok_sanitize_settings( $input ) {
     if ( isset( $input['notification_email'] ) ) { $new_input['notification_email'] = sanitize_email( $input['notification_email'] ); } 
     return $new_input; 
 }
+
+/**
+ * Синхронізує секції на основі текстового поля (textarea).
+ * Кожен рядок у полі - це назва окремої секції.
+ */
+function fok_sync_sections_on_rc_save( $post_id ) {
+    // Перевірки
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+    if ( get_post_type( $post_id ) !== 'residential_complex' ) return;
+    if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+    if ( ! isset( $_POST['fok_rc_sections_list'] ) ) return;
+
+    // 1. Отримуємо список назв секцій з текстового поля
+    $submitted_text = trim( $_POST['fok_rc_sections_list'] );
+    // Розбиваємо текст на масив по рядках, видаляємо порожні рядки і зайві пробіли
+    $submitted_names = array_filter( array_map( 'trim', explode( "\n", $submitted_text ) ) );
+    $submitted_names = array_unique( $submitted_names ); // Залишаємо тільки унікальні назви
+
+    // 2. Отримуємо всі секції, які ВЖЕ прив'язані до цього ЖК
+    $existing_sections_query = new WP_Query([
+        'post_type' => 'section',
+        'posts_per_page' => -1,
+        'meta_key' => 'fok_section_rc_link',
+        'meta_value' => $post_id,
+    ]);
+    $existing_sections = $existing_sections_query->posts;
+    
+    $existing_sections_map = []; // Створюємо карту 'Назва секції' => ID
+    foreach ( $existing_sections as $section ) {
+        $existing_sections_map[ $section->post_title ] = $section->ID;
+    }
+
+    // 3. Додаємо нові секції
+    // Порівнюємо назви з форми з тими, що вже існують
+    $names_to_add = array_diff( $submitted_names, array_keys( $existing_sections_map ) );
+    
+    foreach ( $names_to_add as $name ) {
+        if ( empty( $name ) ) continue;
+        
+        $new_section_id = wp_insert_post([
+            'post_title'  => sanitize_text_field( $name ),
+            'post_type'   => 'section',
+            'post_status' => 'publish',
+        ]);
+        if ( $new_section_id && ! is_wp_error( $new_section_id ) ) {
+            // Прив'язуємо нову секцію до нашого ЖК
+            update_post_meta( $new_section_id, 'fok_section_rc_link', $post_id );
+        }
+    }
+
+    // 4. Видаляємо старі секції
+    // Порівнюємо існуючі назви з тими, що прийшли з форми
+    $names_to_delete = array_diff( array_keys( $existing_sections_map ), $submitted_names );
+
+    foreach ( $names_to_delete as $name ) {
+        $section_id_to_delete = $existing_sections_map[$name];
+        wp_delete_post( $section_id_to_delete, true ); // true = видалити назавжди
+    }
+}
+// Важливо: пріоритет 10, оскільки ми більше не залежимо від збереження групи полів MetaBox
+add_action( 'save_post', 'fok_sync_sections_on_rc_save', 10 );
