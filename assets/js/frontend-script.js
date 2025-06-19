@@ -28,13 +28,154 @@ jQuery(document).ready(function($) {
     let touchStartX = 0;
     let xhr;
 
-    // --- Функції керування каталогом ---
+    // --- НОВА ЛОГІКА ФІЛЬТРАЦІЇ ---
+
+    /**
+     * 1. Функція, що завантажує ВСІ дані з сервера і запускає побудову шахматки
+     */
+    function loadProperties() {
+        if (!currentRCId) return;
+        if (xhr && xhr.readyState !== 4) xhr.abort();
+
+        xhr = $.ajax({
+            url: fok_ajax.ajax_url,
+            type: 'POST',
+            // Зверніть увагу: ми більше не надсилаємо form_data, лише ID комплексу
+            data: { action: 'fok_filter_properties', nonce: fok_ajax.nonce, rc_id: currentRCId },
+            beforeSend: () => {
+                $loader.show();
+                $resultsContainer.hide();
+            },
+            success: (response) => {
+                if (response.success) {
+                    $rcTitle.text(response.data.rc_title);
+                    // Запускаємо побудову HTML з отриманих JSON даних
+                    renderChessboard(response.data.sections);
+                    // Після побудови - одразу застосовуємо поточні фільтри
+                    applyFilters();
+                } else {
+                    $resultsContainer.html('<p>Сталася помилка. Спробуйте ще раз.</p>');
+                }
+            },
+            error: () => $resultsContainer.html('<p>Помилка сервера.</p>'),
+            complete: () => {
+                $loader.hide();
+                $resultsContainer.fadeIn(400);
+            }
+        });
+    }
+
+    /**
+     * 2. Функція, що будує HTML-розмітку шахматки з JSON даних
+     */
+    /**
+ * 2. Функція, що будує HTML-розмітку шахматки з JSON даних (ВИПРАВЛЕНА ВЕРСІЯ)
+ */
+    function renderChessboard(sections) {
+        let html = '';
+        if (sections && Object.keys(sections).length > 0) {
+            html += '<div class="fok-chessboard">';
+            for (const sectionId in sections) {
+                const section = sections[sectionId];
+                if (Object.keys(section.floors).length === 0) continue;
+
+                html += `<div class="fok-section-block">
+                            <h4>${section.name}</h4>
+                            <div class="fok-section-grid">`;
+
+                const existingFloors = Object.keys(section.floors).sort((a, b) => a - b);
+
+                html += '<div class="fok-floor-labels">';
+                // ВИДАЛЕНО .slice().reverse()
+                existingFloors.forEach(floorNum => {
+                    html += `<div class="fok-floor-label">${floorNum}</div>`;
+                });
+                html += '</div>';
+
+                html += '<div class="fok-floor-row-container">';
+                // ВИДАЛЕНО .slice().reverse()
+                existingFloors.forEach(floorNum => {
+                    html += '<div class="fok-floor-row">';
+                    section.floors[floorNum].forEach(property => {
+                        let cellContent = '';
+                        const cellClass = `fok-apartment-cell cell-type-${property.type}`;
+                        
+                        switch (property.type) {
+                            case 'apartment': cellContent = property.rooms; break;
+                            case 'commercial_property': cellContent = '<span class="fok-cell-icon" title="Комерція">К</span>'; break;
+                            case 'parking_space': cellContent = '<span class="fok-cell-icon" title="Паркінг">П</span>'; break;
+                            case 'storeroom': cellContent = '<span class="fok-cell-icon" title="Комора">Т</span>'; break;
+                        }
+
+                        html += `<div class="${cellClass}" 
+                                    data-id="${property.id}"
+                                    data-type="${property.type}"
+                                    data-rooms="${property.rooms}"
+                                    data-area="${property.area}"
+                                    data-floor="${property.floor}"
+                                    data-status="${property.status}">
+                                    <span class="fok-cell-area">${property.area} м&sup2;</span>
+                                    <span class="fok-cell-rooms status-${property.status}">${cellContent}</span>
+                                </div>`;
+                    });
+                    html += '</div>'; // .fok-floor-row
+                });
+                html += '</div>'; // .fok-floor-row-container
+                html += '</div>'; // .fok-section-grid
+                html += '</div>'; // .fok-section-block
+            }
+            html += '</div>'; // .fok-chessboard
+        } else {
+            html = '<p>Для цього ЖК ще не додано об\'єктів.</p>';
+        }
+        $resultsContainer.html(html);
+    }
+    
+    /**
+     * 3. Функція, що застосовує фільтри, додаючи/видаляючи клас is-filtered
+     */
+    function applyFilters() {
+        const filters = {
+            rooms: $('#filter-rooms').val(),
+            area_from: parseFloat($('#filter-area-from').val()) || 0,
+            area_to: parseFloat($('#filter-area-to').val()) || Infinity,
+            floor_from: parseInt($('#filter-floor-from').val()) || 0,
+            floor_to: parseInt($('#filter-floor-to').val()) || Infinity,
+            status: $('#filter-status-toggle').is(':checked') ? 'vilno' : '',
+            types: $('input[name="property_types[]"]:checked').map(function() { return this.value; }).get()
+        };
+
+        $('.fok-apartment-cell').each(function() {
+            const $cell = $(this);
+            const data = $cell.data();
+            let isVisible = true;
+
+            // Перевірка по кожному фільтру
+            if (filters.types.length > 0 && !filters.types.includes(data.type)) isVisible = false;
+            if (filters.status && data.status !== filters.status) isVisible = false;
+            if (data.area < filters.area_from || data.area > filters.area_to) isVisible = false;
+            if (data.floor < filters.floor_from || data.floor > filters.floor_to) isVisible = false;
+
+            if (data.type === 'apartment' && filters.rooms) {
+                if (filters.rooms === '3+' && data.rooms < 3) isVisible = false;
+                if (filters.rooms !== '3+' && data.rooms != filters.rooms) isVisible = false;
+            }
+            
+            // Додаємо або видаляємо клас
+            $cell.toggleClass('is-filtered', !isVisible);
+        });
+    }
+
+    // --- ІСНУЮЧІ ФУНКЦІЇ (без змін) ---
+    // Тут іде весь ваш робочий код для відображення панелей, лайтбоксу і т.д.
+    // Він залишається таким самим.
+
     function openViewer(rcId) {
         if (!rcId) return;
         currentRCId = rcId;
         $body.addClass('fok-viewer-is-open');
         $viewer.addClass('is-visible');
-        loadProperties();
+        loadProperties(); // Викликаємо нашу НОВУ функцію завантаження
     }
 
     function closeViewer() {
@@ -46,39 +187,6 @@ jQuery(document).ready(function($) {
         $rcTitle.text('');
         currentRCId = null;
     }
-
-    // --- Функції завантаження даних ---
-    const loadProperties = debounce(() => {
-        if (!currentRCId) return;
-        if (xhr && xhr.readyState !== 4) xhr.abort();
-        
-        const formData = $filtersForm.serialize();
-        xhr = $.ajax({
-            url: fok_ajax.ajax_url, type: 'POST',
-            data: { action: 'fok_filter_properties', nonce: fok_ajax.nonce, rc_id: currentRCId, form_data: formData },
-            beforeSend: () => { 
-                $loader.show(); 
-                $resultsContainer.hide(); 
-            },
-            success: (response) => {
-                if (response.success) {
-                    $rcTitle.text(response.data.rc_title);
-                    $resultsContainer.html(response.data.html);
-                    
-                    if (response.data.html.includes('fok-chessboard') === false) {
-                        closeDetailsPanel(true);
-                    }
-                } else {
-                    $resultsContainer.html('<p>Сталася помилка. Спробуйте ще раз.</p>');
-                }
-            },
-            error: () => $resultsContainer.html('<p>Помилка сервера.</p>'),
-            complete: () => { 
-                $loader.hide();
-                $resultsContainer.fadeIn(400); 
-            }
-        });
-    }, 500);
 
     function loadPropertyDetails(propertyId) {
         $panelContent.animate({ opacity: 0 }, 200, function() {
@@ -104,8 +212,11 @@ jQuery(document).ready(function($) {
         });
     }
 
-    // --- Функції рендерингу та панелей ---
     function openDetailsPanel(propertyId) {
+        // Запобігаємо відкриттю панелі для відфільтрованих елементів
+        if ($viewer.find(`.fok-apartment-cell[data-id="${propertyId}"]`).hasClass('is-filtered')) {
+            return;
+        }
         $('.fok-apartment-cell.active').removeClass('active');
         $viewer.find(`.fok-apartment-cell[data-id="${propertyId}"]`).addClass('active');
         $detailsPanel.addClass('is-open');
@@ -123,9 +234,8 @@ jQuery(document).ready(function($) {
         }
     }
 
-    // ОНОВЛЕНА ФУНКЦІЯ
     function renderPanelContent(data) {
-        // 1. Блок галереї (залишається без змін)
+        // 1. Блок галереї
         let galleryHtml = '';
         if (data.gallery && data.gallery.length > 0) {
             let thumbnailsHtml = '';
@@ -134,38 +244,51 @@ jQuery(document).ready(function($) {
                     thumbnailsHtml += `<div class="thumb ${index === 0 ? 'active' : ''}" data-full-src="${img.full}"><img src="${img.thumb}" alt="Thumbnail"></div>`;
                 });
             }
-            galleryHtml = `<div class="fok-panel-gallery"><div class="main-image"><img src="${data.gallery[0].full}" alt="Layout"></div>${data.gallery.length > 1 ? `<div class="thumbnails">${thumbnailsHtml}</div>` : ''}</div>`;
+            galleryHtml = `<div class="fok-panel-gallery">
+                <div class="main-image">
+                    <img src="${data.gallery[0].full}" alt="Layout">
+                </div>
+                ${data.gallery.length > 1 ? `<div class="thumbnails">${thumbnailsHtml}</div>` : ''}
+            </div>`;
         } else {
-            galleryHtml = '<p>Зображення відсутні.</p>';
+            galleryHtml = '<div class="fok-panel-gallery"><p>Зображення відсутні.</p></div>';
         }
 
-        // 2. Блок параметрів "Площа", "Поверх" і т.д. (залишається без змін)
+        // 2. Блок основних параметрів
         let paramsHtml = '';
         for (const [key, value] of Object.entries(data.params)) {
-            if (value) paramsHtml += `<li><span>${key}</span><strong>${value}</strong></li>`;
+            if (value) {
+                paramsHtml += `<li><span>${key}</span><strong>${value}</strong></li>`;
+            }
         }
 
-        // 3. НОВИЙ БЛОК: Створюємо блок для статусу та ціни
-        let infoBlockHtml = `<div class="fok-panel-info">`; // Новий контейнер для порядку
+        // 3. Інформаційний блок: Статус + Ціна
+        let infoBlockHtml = `<div class="fok-panel-info">`;
         infoBlockHtml += `<div class="fok-panel-status status-${data.status_slug}">${data.status_name}</div>`;
-        if (data.status_slug === 'vilno') {
-            infoBlockHtml += `<div class="fok-panel-price"><div class="total-price">${data.total_price} ${data.currency}</div><div class="price-per-m2">${data.price_per_m2} ${data.currency} / м²</div></div>`;
+        if (data.status_slug === 'vilno' && data.total_price.trim() !== '0') {
+            infoBlockHtml += `<div class="fok-panel-price">
+                <div class="total-price">${data.total_price} ${data.currency}</div>
+                <div class="price-per-m2">${data.price_per_m2} ${data.currency} / м²</div>
+            </div>`;
         }
         infoBlockHtml += `</div>`;
 
-        // 4. Блок з кнопкою "Забронювати" (залишається без змін)
-        let bookingHtml = data.status_slug === 'vilno' ? `<div class="fok-panel-actions"><button class="fok-booking-btn-show fok-booking-button">Забронювати</button></div>` : '';
+        // 4. Кнопка бронювання
+        let bookingHtml = data.status_slug === 'vilno' 
+            ? `<div class="fok-panel-actions"><button class="fok-booking-btn-show fok-booking-button">Забронювати</button></div>` 
+            : '';
 
-        // 5. ФІНАЛЬНА ЗБІРКА: збираємо всі блоки у правильному порядку
-        // Заголовок (headerHtml) повністю видалено
-        // Новий блок (infoBlockHtml) додано ПІСЛЯ галереї
+        // 5. ФІНАЛЬНА ЗБІРКА (ВИПРАВЛЕНО)
+        // Рядок із заголовком h3 повністю видалено.
+        // Усі коментарі всередині `` `...` `` прибрано.
         const contentHtml = `
             ${galleryHtml}
             ${infoBlockHtml}
-            <ul class="fok-panel-params">${paramsHtml}</ul>
             ${bookingHtml}
+            <ul class="fok-panel-params">${paramsHtml}</ul>
         `;
         
+        // Вставляємо згенерований HTML в панель
         $panelContent.html(contentHtml).animate({ opacity: 1 }, 250);
     }
     
@@ -183,32 +306,36 @@ jQuery(document).ready(function($) {
         $filtersForm.find('[data-dependency="apartment"]').toggle(isApartmentChecked);
     }
 
-    // --- Функції Лайтбоксу ---
     function openLightbox(clickedImageSrc) {
         currentImageIndex = currentGallery.findIndex(img => img.full === clickedImageSrc);
         if (currentImageIndex === -1) currentImageIndex = 0;
         updateLightboxImage();
         $lightbox.addClass('is-open');
     }
+
     function updateLightboxImage() {
         if(currentGallery.length === 0) return;
         $lightboxImage.attr('src', currentGallery[currentImageIndex].full);
         updateLightboxNav();
     }
+
     function updateLightboxNav() {
         $lightboxPrev.toggle(currentGallery.length > 1);
         $lightboxNext.toggle(currentGallery.length > 1);
     }
+
     function showNextImage() {
         if (currentGallery.length <= 1) return;
         currentImageIndex = (currentImageIndex + 1) % currentGallery.length;
         updateLightboxImage();
     }
+
     function showPrevImage() {
         if (currentGallery.length <= 1) return;
         currentImageIndex = (currentImageIndex - 1 + currentGallery.length) % currentGallery.length;
         updateLightboxImage();
     }
+
     function handleSwipe(event) {
         const swipeThreshold = 50;
         const diffX = touchStartX - event.changedTouches[0].clientX;
@@ -217,9 +344,29 @@ jQuery(document).ready(function($) {
             else showPrevImage();
         }
     }
-
+    
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), wait);
+        };
+    }
 
     // --- Обробники подій ---
+
+    // Прив'язуємо applyFilters до зміни форми. debounce для оптимізації
+    const debouncedApplyFilters = debounce(applyFilters, 400);
+    $filtersForm.on('change keyup', 'input, select', debouncedApplyFilters);
+    // Окремий обробник для кнопок кімнат
+    $viewer.on('click', '.fok-room-buttons .room-btn', function() {
+        $(this).addClass('active').siblings().removeClass('active');
+        $filtersForm.find('#filter-rooms').val($(this).data('value'));
+        // Ручний виклик фільтрації після зміни кімнат
+        debouncedApplyFilters();
+    });
+    
     $body.on('click', '.fok-open-viewer', function(e) {
         e.preventDefault();
         openViewer($(this).data('rc-id'));
@@ -227,25 +374,10 @@ jQuery(document).ready(function($) {
 
     $closeButton.on('click', closeViewer);
     
-    $viewer.on('click', '.fok-view-modes button', function() {
-        const mode = $(this).data('mode');
-        $(this).addClass('active').siblings().removeClass('active');
-        $viewer.find('.fok-viewer-content > div').removeClass('active');
-        $viewer.find('#fok-' + mode + '-mode').addClass('active');
-    });
-
-    $viewer.on('click', '.fok-room-buttons .room-btn', function() {
-        $(this).addClass('active').siblings().removeClass('active');
-        $filtersForm.find('#filter-rooms').val($(this).data('value')).trigger('change');
-    });
-
-    $filtersForm.on('change keyup', 'input, select', loadProperties);
-    
-    // Initial state for room filter
     updateRoomFilterState(); 
     $propertyTypeCheckboxes.on('change', updateRoomFilterState);
 
-
+    // Клік по клітинці шахматки
     $resultsContainer.on('click', '.fok-apartment-cell', function(e) {
         e.preventDefault();
         openDetailsPanel($(this).data('id'));
@@ -290,8 +422,8 @@ jQuery(document).ready(function($) {
                 const messageClass = response.success ? 'success' : 'error';
                 $message.removeClass('success error').addClass(messageClass).text(response.data).slideDown();
                 if (response.success) {
-                    // We need to reload details to get the new status
-                    setTimeout(() => loadPropertyDetails(lastFetchedPropertyData.id), 3000);
+                    loadProperties(); // Перезавантажуємо всю шахматку, щоб оновити статуси
+                    setTimeout(() => closeDetailsPanel(true), 3000); // Закриваємо панель
                 } else {
                     $submitBtn.prop('disabled', false).text('Надіслати заявку');
                 }
@@ -303,7 +435,6 @@ jQuery(document).ready(function($) {
         });
     });
 
-    // Події лайтбоксу
     $lightbox.on('click', function(e) {
         if (e.target === this || $(e.target).is('#fok-lightbox-close')) {
             $lightbox.removeClass('is-open');
@@ -320,6 +451,8 @@ jQuery(document).ready(function($) {
         if (e.key === "Escape") {
             if ($lightbox.hasClass('is-open')) {
                 $lightbox.removeClass('is-open');
+            } else if ($detailsPanel.hasClass('is-open')) {
+                closeDetailsPanel();
             } else {
                 closeViewer();
             }
@@ -332,12 +465,4 @@ jQuery(document).ready(function($) {
 
     $('#fok-mobile-filter-trigger').on('click', () => $sidebar.addClass('is-open'));
     $('#fok-sidebar-close').on('click', () => $sidebar.removeClass('is-open'));
-    
-    function debounce(func, wait) {
-        let timeout;
-        return function(...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), wait);
-        };
-    }
 });
