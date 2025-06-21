@@ -158,24 +158,56 @@ function fok_filter_properties_ajax_handler() {
     $rc_post = get_post($rc_id);
     $rc_title = $rc_post ? $rc_post->post_title : '';
 
-    $property_types = ['apartment', 'commercial_property', 'parking_space', 'storeroom'];
+    // Визначаємо поріг для групування. Якщо об'єктів на поверсі більше, вони будуть згруповані.
+    define('GROUPING_THRESHOLD', 8); 
 
-    $args = [
-        'post_type' => $property_types,
+    $sections_query = new WP_Query([
+        'post_type' => 'section',
         'posts_per_page' => -1,
         'meta_query' => [
             [
-                'key' => 'fok_property_rc_link',
+                'key' => 'fok_section_rc_link',
                 'value' => $rc_id
             ]
         ],
-        'orderby' => ['meta_value_num' => 'ASC'],
-        'meta_key' => 'fok_property_floor',
+        'orderby' => 'title',
+        'order' => 'ASC',
+    ]);
+
+    $sections_data = [];
+    if ($sections_query->have_posts()) {
+        while ($sections_query->have_posts()) {
+            $sections_query->the_post();
+            $section_id = get_the_ID();
+            
+            $total_floors = (int)get_post_meta($section_id, 'fok_section_total_floors', true);
+            $floors_grid = [];
+            if ($total_floors > 0) {
+                for ($i = 1; $i <= $total_floors; $i++) {
+                    $floors_grid[$i] = [];
+                }
+            }
+
+            $sections_data[$section_id] = [
+                'name' => get_the_title(),
+                'floors' => $floors_grid,
+                'max_floor' => $total_floors,
+            ];
+        }
+    }
+    wp_reset_postdata();
+
+    $property_types = ['apartment', 'commercial_property', 'parking_space', 'storeroom'];
+    $args = [
+        'post_type' => $property_types,
+        'posts_per_page' => -1,
+        'meta_query' => [ ['key' => 'fok_property_rc_link', 'value' => $rc_id] ],
+        'orderby' => 'ID',
+        'order' => 'ASC',
     ];
 
     $query = new WP_Query($args);
 
-    $sections_data = [];
     if ($query->have_posts()) {
         while ($query->have_posts()) {
             $query->the_post();
@@ -184,18 +216,13 @@ function fok_filter_properties_ajax_handler() {
             $section_id = get_post_meta($property_id, 'fok_property_section_link', true);
             $floor = (int)get_post_meta($property_id, 'fok_property_floor', true);
 
-            if (!$section_id) continue;
-
-            if (!isset($sections_data[$section_id])) {
-                $section_post = get_post($section_id);
-                $sections_data[$section_id] = [
-                    'name' => $section_post ? $section_post->post_title : __('Невідома секція', 'okbi-apartments'),
-                    'floors' => []
-                ];
+            if (!$section_id || !isset($sections_data[$section_id])) {
+                continue;
             }
 
             $status_terms = get_the_terms($property_id, 'status');
             $status_slug = !is_wp_error($status_terms) && !empty($status_terms) ? $status_terms[0]->slug : 'unknown';
+            $discount_percent = (float) get_post_meta($property_id, 'fok_property_discount_percent', true);
 
             $property_data = [
                 'id' => $property_id,
@@ -204,12 +231,63 @@ function fok_filter_properties_ajax_handler() {
                 'floor' => $floor,
                 'status' => $status_slug,
                 'rooms' => ($post_type === 'apartment') ? (int)get_post_meta($property_id, 'fok_property_rooms', true) : 0,
+                'has_discount' => $discount_percent > 0,
+                'levels' => ($post_type === 'apartment') ? (int)get_post_meta($property_id, 'fok_property_levels', true) ?: 1 : 1,
             ];
+            
+            if ($floor > $sections_data[$section_id]['max_floor']) {
+                 for ($i = $sections_data[$section_id]['max_floor'] + 1; $i <= $floor; $i++) {
+                    $sections_data[$section_id]['floors'][$i] = [];
+                }
+                $sections_data[$section_id]['max_floor'] = $floor;
+            }
 
-            $sections_data[$section_id]['floors'][$floor][] = $property_data;
+            if (isset($sections_data[$section_id]['floors'][$floor])) {
+                 $sections_data[$section_id]['floors'][$floor][] = $property_data;
+            } else {
+                 $sections_data[$section_id]['floors'][$floor] = [$property_data];
+            }
         }
     }
     wp_reset_postdata();
+    
+    // --- ПОВЕРТАЄМО НАЗАД ЛОГІКУ ГРУПУВАННЯ ---
+    foreach ($sections_data as $section_id => &$section) {
+        foreach ($section['floors'] as $floor_num => &$floor_items) {
+            // Перевіряємо, чи є взагалі об'єкти на поверсі
+            if (empty($floor_items)) continue;
+            
+            $item_count = count($floor_items);
+            if ($item_count <= GROUPING_THRESHOLD) {
+                continue;
+            }
+
+            $types_on_floor = array_unique(wp_list_pluck($floor_items, 'type'));
+            $groupable_types = ['parking_space', 'storeroom'];
+            $is_groupable = true;
+
+            foreach ($types_on_floor as $type) {
+                if (!in_array($type, $groupable_types)) {
+                    $is_groupable = false;
+                    break;
+                }
+            }
+            if ($is_groupable) {
+                $status_counts = array_count_values(wp_list_pluck($floor_items, 'status'));
+                $floor_items = [
+                    'is_grouped' => true,
+                    'type_name' => count($types_on_floor) > 1 ? 'Об\'єкти' : ($types_on_floor[0] == 'parking_space' ? 'Паркомісця' : 'Комори'),
+                    'count' => $item_count,
+                    'status_counts' => [
+                        'vilno' => $status_counts['vilno'] ?? 0,
+                        'zabronovano' => $status_counts['zabronovano'] ?? 0,
+                        'prodano' => $status_counts['prodano'] ?? 0,
+                    ],
+                    'items' => $floor_items
+                ];
+            }
+        }
+    }
 
     wp_send_json_success(['sections' => $sections_data, 'rc_title' => $rc_title]);
 }
