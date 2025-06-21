@@ -77,6 +77,15 @@ function fok_register_meta_boxes( $meta_boxes ) {
             ],
             [ 'id' => 'fok_property_floor', 'name' => __( 'Поверх', 'okbi-apartments' ), 'type' => 'number', 'min'  => 0, ],
             [
+                'id'   => 'fok_property_levels',
+                'name' => __( 'Кількість рівнів (поверхів)', 'okbi-apartments' ),
+                'type' => 'number',
+                'min'  => 1,
+                'std'  => 1, // Значення за замовчуванням - 1
+                'desc' => __('Для звичайних квартир залиште "1". Для дворівневих вкажіть "2".', 'okbi-apartments'),
+                'visible' => ['post_type', '=', 'apartment'], // Показувати тільки для квартир
+            ],
+            [
                 'id' => 'fok_property_rooms', 'name' => __( 'Кількість кімнат', 'okbi-apartments' ),
                 'type' => 'number', 'min' => 1, 'visible' => ['post_type', '=', 'apartment'],
             ],
@@ -88,7 +97,7 @@ function fok_register_meta_boxes( $meta_boxes ) {
                 'step' => '0.01',
                 'desc' => __( 'Заповнюйте, якщо ціна розраховується на основі площі.', 'okbi-apartments' ),
             ],
-            // --- НОВЕ ПОЛЕ ---
+            // --- ЦІНВ ЗА ОБʼЄКТ ---
             [
                 'name' => __( 'Загальна ціна за об\'єкт', 'okbi-apartments' ),
                 'id'   => 'fok_property_total_price_manual',
@@ -101,7 +110,7 @@ function fok_register_meta_boxes( $meta_boxes ) {
                 'type'    => 'select',
                 'options' => [ 'UAH' => 'UAH', 'USD' => 'USD', 'EUR' => 'EUR', ],
             ],
-            // --- НОВЕ ПОЛЕ ---
+            // --- ЗНИЖКА ---
             [
                 'name' => __( 'Знижка, %', 'okbi-apartments' ),
                 'id'   => 'fok_property_discount_percent',
