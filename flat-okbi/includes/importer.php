@@ -25,8 +25,8 @@ function fok_render_importer_page() {
             <div class="card">
                 <h2 class="title"><?php _e( 'Імпорт з CSV', 'okbi-apartments' ); ?></h2>
                 <p><strong><?php _e( 'Необхідні колонки:', 'okbi-apartments' ); ?></strong></p>
-                <code>unique_id,post_type,rc_name,section_name,property_number,floor,rooms,area,price_per_sqm,total_price,currency,discount_percent,status</code>
-                <p><?php _e('Заповнюйте `price_per_sqm` АБО `total_price`. Якщо заповнені обидва, пріоритет у `total_price`.', 'okbi-apartments'); ?></p>
+                <code>unique_id,post_type,rc_name,section_name,property_number,floor,rooms,area,price_per_sqm,total_price,currency,discount_percent,status,layout_images</code>
+                <p><?php _e('У колонці `layout_images` вказуйте імена файлів зображень (з розширенням), розділені комою. Зображення мають бути попередньо завантажені у Медіа-бібліотеку.', 'okbi-apartments'); ?></p>
                 <p><a href="<?php echo esc_url(plugin_dir_url(__FILE__) . '../assets/properties-example.csv'); ?>" download><?php _e('Завантажити приклад файлу', 'okbi-apartments'); ?></a></p>
                 <hr>
                 <form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
@@ -38,8 +38,9 @@ function fok_render_importer_page() {
             </div>
             <div class="card">
                 <h2 class="title"><?php _e( 'Експорт в CSV', 'okbi-apartments' ); ?></h2>
-                <form method="post">
-                     <?php wp_nonce_field( 'fok_export_nonce_action', 'fok_export_nonce' ); ?>
+                <form method="post" action="<?php echo esc_url( admin_url('admin.php') ); ?>">
+                    <input type="hidden" name="action" value="fok_handle_csv_export">
+                    <?php wp_nonce_field( 'fok_export_nonce_action', 'fok_export_nonce' ); ?>
                     <table class="form-table">
                          <tr valign="top">
                             <th scope="row"><label for="fok_export_rc_id"><?php _e('Виберіть ЖК', 'okbi-apartments'); ?></label></th>
@@ -75,9 +76,36 @@ function fok_render_importer_page() {
     <?php
 }
 
+/**
+ * Нова допоміжна функція для пошуку ID зображення за його іменем файлу
+ */
+function fok_get_attachment_id_by_filename( $filename ) {
+    $attachment_id = 0;
+    // Шукаємо вкладення, шлях до якого ЗАКІНЧУЄТЬСЯ на потрібне ім'я файлу
+    $attachment_query = new WP_Query( [
+        'post_type'      => 'attachment',
+        'post_status'    => 'inherit',
+        'posts_per_page' => 1,
+        'meta_query'     => [
+            [
+                'key'     => '_wp_attached_file',
+                'value'   => $filename,
+                'compare' => 'LIKE',
+            ],
+        ],
+        'fields' => 'ids', // Отримуємо лише ID для швидкості
+    ] );
+    if ( !empty($attachment_query->posts) ) {
+        $attachment_id = $attachment_query->posts[0];
+    }
+    return $attachment_id;
+}
+
+
 function fok_handle_csv_upload() {
     if ( ! isset( $_POST['submit-import'] ) ) return;
-    if ( ! isset( $_POST['fok_import_nonce'] ) || ! wp_verify_nonce( $_POST['fok_import_nonce'], 'fok_import_nonce_action' ) ) return;
+    if ( ! isset( $_POST['fok_import_nonce'] ) ) return;
+    if ( ! wp_verify_nonce( $_POST['fok_import_nonce'], 'fok_import_nonce_action' ) ) return;
     if ( ! current_user_can('manage_options') ) return;
 
     $redirect_url = admin_url( 'admin.php?page=flat_okbi_import' );
@@ -149,7 +177,6 @@ function fok_handle_csv_upload() {
 
     foreach ($csv_data_rows as $row_data) {
         
-        // --- ВИПРАВЛЕНО: Зчитуємо ВСІ дані з $row_data на другому етапі ---
         $unique_id        = sanitize_text_field(trim($row_data['unique_id']));
         $post_type_name   = trim($row_data['post_type']);
         $post_type        = $type_map[$post_type_name] ?? null;
@@ -170,6 +197,8 @@ function fok_handle_csv_upload() {
         $discount_percent = floatval(str_replace(',', '.', ($row_data['discount_percent'] ?? 0)));
         $currency         = sanitize_text_field(strtoupper(trim($row_data['currency'])));
         $status_name      = sanitize_text_field(trim($row_data['status']));
+        
+        $image_filenames_str = trim($row_data['layout_images'] ?? '');
 
         $rc_post = get_page_by_title($rc_name, OBJECT, 'residential_complex');
         if (!$rc_post) { $stats['errors']++; continue; }
@@ -197,6 +226,7 @@ function fok_handle_csv_upload() {
 
         if (!$property_id || is_wp_error($property_id)) { $stats['errors']++; continue; }
 
+        // ... (оновлення всіх інших мета-полів) ...
         update_post_meta($property_id, 'fok_property_unique_id', $unique_id);
         update_post_meta($property_id, 'fok_property_rc_link', $rc_id);
         update_post_meta($property_id, 'fok_property_section_link', $section_id);
@@ -220,6 +250,40 @@ function fok_handle_csv_upload() {
         } else {
             wp_set_object_terms($property_id, null, 'status', false);
         }
+
+        // --- НОВА СПРОЩЕНА ЛОГІКА: пошук зображень за іменем файлу ---
+        if (!empty($image_filenames_str)) {
+            $image_paths = array_map('trim', explode(',', $image_filenames_str));
+            $new_image_ids = [];
+
+            foreach($image_paths as $path) {
+                if (empty($path)) continue;
+
+                $attachment_id = 0;
+
+                // Перевіряємо, чи передано повний URL, чи тільки ім'я файлу
+                if (filter_var($path, FILTER_VALIDATE_URL)) {
+                    // Якщо це URL, використовуємо стандартну функцію WordPress
+                    $attachment_id = attachment_url_to_postid($path);
+                } else {
+                    // Якщо це просто ім'я файлу, використовуємо нашу допоміжну функцію
+                    $attachment_id = fok_get_attachment_id_by_filename($path);
+                }
+
+                if ($attachment_id) {
+                    $new_image_ids[] = $attachment_id;
+                }
+            }
+
+            if (!empty($new_image_ids)) {
+                // Спочатку видаляємо всі старі зображення, щоб уникнути дублів
+                delete_post_meta($property_id, 'fok_property_layout_images');
+                // Додаємо знайдені ID зображень до об'єкта
+                foreach($new_image_ids as $id) {
+                    add_post_meta($property_id, 'fok_property_layout_images', $id, false);
+                }
+            }
+        }
     }
 
     ini_set('auto_detect_line_endings', FALSE);
@@ -230,8 +294,9 @@ add_action( 'admin_post_fok_handle_csv_import', 'fok_handle_csv_upload' );
 
 
 function fok_handle_csv_export() {
-    if ( ! isset( $_POST['submit-export'] ) ) return;
-    if ( ! isset( $_POST['fok_export_nonce'] ) || ! wp_verify_nonce( $_POST['fok_export_nonce'], 'fok_export_nonce_action' ) ) return;
+    if ( ! isset( $_REQUEST['action'] ) || $_REQUEST['action'] !== 'fok_handle_csv_export' ) return;
+    if ( ! isset( $_POST['fok_export_nonce'] ) ) return;
+    if ( ! wp_verify_nonce( $_POST['fok_export_nonce'], 'fok_export_nonce_action' ) ) return;
     if ( ! current_user_can('manage_options') ) return;
 
     $rc_id = isset($_POST['fok_export_rc_id']) ? $_POST['fok_export_rc_id'] : 'all';
@@ -251,7 +316,8 @@ function fok_handle_csv_export() {
 
     $output = fopen('php://output', 'w');
     fputs($output, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
-    fputcsv($output, ['unique_id','post_type','rc_name','section_name','property_number','floor','rooms','area','price_per_sqm','total_price','currency','discount_percent','status']);
+    
+    fputcsv($output, ['unique_id','post_type','rc_name','section_name','property_number','floor','rooms','area','price_per_sqm','total_price','currency','discount_percent','status','layout_images']);
     
     $type_names = [
         'apartment' => 'Квартира', 'commercial_property' => 'Комерція',
@@ -264,6 +330,19 @@ function fok_handle_csv_export() {
         $rc_id = get_post_meta($property_id, 'fok_property_rc_link', true);
         $section_id = get_post_meta($property_id, 'fok_property_section_link', true);
         
+        // --- НОВА СПРОЩЕНА ЛОГІКА: Отримуємо імена файлів, а не URL ---
+        $image_ids = get_post_meta($property_id, 'fok_property_layout_images', false);
+        $image_filenames = [];
+        if (!empty($image_ids)) {
+            foreach($image_ids as $image_id) {
+                // Отримуємо повний шлях до файлу і беремо з нього лише ім'я
+                $filepath = get_attached_file((int)$image_id);
+                if ($filepath) {
+                    $image_filenames[] = basename($filepath);
+                }
+            }
+        }
+
         $row = [
             get_post_meta($property_id, 'fok_property_unique_id', true),
             $type_names[$post_type] ?? $post_type,
@@ -277,7 +356,8 @@ function fok_handle_csv_export() {
             get_post_meta($property_id, 'fok_property_total_price_manual', true),
             get_post_meta($property_id, 'fok_property_currency', true),
             get_post_meta($property_id, 'fok_property_discount_percent', true),
-            get_the_terms($property_id, 'status') ? get_the_terms($property_id, 'status')[0]->name : ''
+            get_the_terms($property_id, 'status') ? get_the_terms($property_id, 'status')[0]->name : '',
+            implode(',', $image_filenames) // Додаємо імена файлів через кому
         ];
         fputcsv($output, $row);
     }
@@ -285,4 +365,9 @@ function fok_handle_csv_export() {
     fclose($output);
     exit;
 }
-add_action( 'admin_init', 'fok_handle_csv_export');
+// Змінено хук на admin_post_{action} для відповідності формі
+add_action( 'admin_init', function() {
+    if (isset($_REQUEST['action']) && $_REQUEST['action'] === 'fok_handle_csv_export') {
+        fok_handle_csv_export();
+    }
+});
