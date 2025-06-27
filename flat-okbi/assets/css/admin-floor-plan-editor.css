@@ -1,0 +1,194 @@
+/* === FOK: СТИЛІ АДМІН-ПАНЕЛІ ДЛЯ РЕДАКТОРА ПЛАНІВ ПОВЕРХІВ === */
+
+/* --- Рядки для кожного поверху --- */
+.fok-floor-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #ccd0d4;
+    margin-bottom: 10px;
+    background: #f6f7f7;
+}
+
+.fok-floor-row .handle {
+    cursor: move;
+    color: #50575e;
+    font-size: 24px;
+}
+
+.fok-floor-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fok-floor-field-group label {
+    font-weight: 500;
+}
+
+.fok-image-preview-thumb {
+    min-height: 50px;
+}
+
+.fok-image-preview-thumb img {
+    max-width: 100px;
+    height: auto;
+    border: 1px solid #ddd;
+    background: #fff;
+    padding: 2px;
+    display: block;
+}
+
+.fok-floor-actions {
+    margin-left: auto;
+}
+
+/* --- Виправлення Z-index модального вікна для адмінки WordPress --- */
+.ui-widget.ui-widget-content.wp-dialog {
+    z-index: 100100 !important;
+}
+
+.ui-widget-overlay {
+    z-index: 100099 !important;
+}
+
+
+/* === СТИЛІ РЕДАКТОРА ПОЛІГОНІВ (ВСЕРЕДИНІ МОДАЛЬНОГО ВІКНА) === */
+/* --- Розмітка --- */
+#fok-floor-plan-modal .fok-polygon-editor-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+}
+
+#fok-floor-plan-modal .fok-editor-main-area {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+#fok-floor-plan-modal .fok-editor-image-container {
+    position: relative;
+    border: 1px solid #ccc;
+    background: #f0f0f0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+}
+
+#fok-floor-plan-modal .fok-editor-bg-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    user-select: none;
+}
+
+#fok-floor-plan-modal .fok-editor-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* --- Фігури SVG та точки --- */
+#fok-floor-plan-modal .fok-editor-svg polygon {
+    fill: rgba(0, 115, 255, 0.4);
+    stroke: #0073ff;
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
+    cursor: pointer;
+}
+
+#fok-floor-plan-modal .fok-editor-svg polygon.active {
+    fill: rgba(255, 100, 0, 0.5);
+    stroke: #ff6400;
+}
+
+#fok-floor-plan-modal .fok-polygon-point {
+    fill: #ff5722;
+    stroke: #ffffff;
+    stroke-width: 1px;
+    cursor: move;
+    vector-effect: non-scaling-stroke;
+    transition: all 0.2s ease;
+}
+
+#fok-floor-plan-modal .fok-polygon-point:hover {
+    fill: #e64a19;
+}
+
+
+/* --- Елементи керування та список об'єктів --- */
+#fok-floor-plan-modal .fok-editor-controls {
+    width: 100%;
+    max-width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#fok-floor-plan-modal .fok-editor-controls h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+#fok-floor-plan-modal .fok-floor-objects-list {
+    flex-grow: 1;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #fdfdfd;
+    border: 1px solid #eee;
+    overflow-y: auto;
+}
+
+.fok-property-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: -1px;
+    background: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.fok-property-list-item:hover {
+    background-color: #f0f6fc;
+}
+
+.fok-property-list-item.active {
+    background-color: #e4f0ff;
+    border-color: #0073aa;
+    color: #0073aa;
+    font-weight: 600;
+}
+
+.fok-property-list-item .actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #787c82;
+}
+
+.fok-property-list-item .actions .dashicons-yes-alt {
+    color: #28a745;
+}
+
+.fok-property-list-item .actions .dashicons-trash {
+    cursor: pointer;
+    color: #d63638;
+}
+
+.fok-property-list-item .actions .dashicons-trash:hover {
+    color: #a02728;
+}
