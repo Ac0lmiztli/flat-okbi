@@ -1,0 +1,215 @@
+/* === FOK: СТИЛІ РЕДАКТОРА СІТКИ В АДМІН-ПАНЕЛІ === */
+
+/* --- Загальний контейнер редактора --- */
+.fok-grid-editor-wrapper {
+    background-color: #fcfcfc;
+    border: 1px solid #ccd0d4;
+    margin-top: 1rem;
+}
+
+.fok-editor-main-content {
+    position: relative;
+    padding: 15px;
+    min-height: 400px;
+}
+
+.fok-editor-layout {
+    display: flex;
+    gap: 20px;
+}
+
+/* --- Список нерозподілених об'єктів --- */
+.fok-unassigned-pool {
+    width: 240px;
+    flex-shrink: 0;
+    border: 1px solid #ddd;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.fok-unassigned-pool h4 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.fok-unassigned-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.fok-unassigned-item {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: #fff;
+    cursor: grab;
+    font-size: 12px;
+}
+
+.fok-unassigned-item.is-dragging {
+    background-color: #d8eafc !important;
+    border-style: dashed !important;
+}
+
+.fok-unassigned-item.status-vilno { border-left: 4px solid #6D972E; }
+.fok-unassigned-item.status-prodano { border-left: 4px solid #E45545; background-color: #f1f1f1; color: #777; }
+.fok-unassigned-item.status-zabronovano { border-left: 4px solid #FAD074; }
+
+.empty-list {
+    color: #777;
+    font-style: italic;
+    margin: 0;
+    padding: 5px;
+}
+
+/* --- Сітка для розміщення об'єктів --- */
+.fok-editor-grid-container {
+    flex-grow: 1;
+    overflow-x: auto;
+}
+
+.fok-grid {
+    display: grid;
+    grid-template-columns: 40px repeat(var(--grid-cols, 10), minmax(60px, 1fr));
+    grid-auto-rows: 40px;
+    grid-gap: 4px;
+    background-color: #f0f2f5;
+    padding: 10px;
+    border: 1px solid #ddd;
+    position: relative;
+}
+
+.fok-grid-cell {
+    background-color: #fff;
+    border: 1px dashed #ccc;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+.fok-grid-cell.is-hovered {
+    background-color: #d8eafc;
+    border-style: solid;
+}
+
+.fok-grid-floor-label {
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    background-color: #e8eaeb;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+
+/* --- Блок об'єкта нерухомості на сітці --- */
+.fok-property-block {
+    box-sizing: border-box;
+    padding: 5px;
+    border: 1px solid #555;
+    background-color: #a7d8a9;
+    color: #000;
+    font-size: 11px;
+    line-height: 1.2;
+    border-radius: 3px;
+    cursor: move;
+    z-index: 5;
+    overflow: hidden;
+    position: relative;
+}
+
+.fok-property-block:hover {
+    border-color: #0073aa;
+    z-index: 6;
+}
+
+.fok-property-block.status-vilno { background-color: #c7e6c8; border-color: #5d9d60; }
+.fok-property-block.status-prodano { background-color: #f8d7da; border-color: #dc3545; }
+.fok-property-block.status-zabronovano { background-color: #fff3cd; border-color: #ffc107; }
+
+.fok-prop-title {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.fok-prop-edit-link {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    text-decoration: none;
+    display: none;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    line-height: 16px;
+    font-size: 10px;
+}
+
+.fok-property-block:hover .fok-prop-edit-link {
+    display: inline-block;
+}
+
+.fok-resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background: #0073aa;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #fff;
+    cursor: se-resize;
+    z-index: 20;
+}
+
+
+/* --- Допоміжні та сервісні стилі --- */
+.fok-editor-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 10;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.fok-editor-loader .spinner {
+    visibility: visible;
+}
+
+.fok-editor-toolbar {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.fok-save-status {
+    font-weight: 500;
+}
+
+.fok-save-status.success { color: #28a745; }
+.fok-save-status.error { color: #dc3545; }
+
+.fok-unassigned-pool.is-hovered {
+    border-color: #0073aa;
+    background-color: #f0f5fa;
+}
+
+.ui-draggable-dragging {
+    z-index: 100 !important;
+}
