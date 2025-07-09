@@ -1,0 +1,191 @@
+/* assets/css/admin-pricing.css */
+
+/* Загальний контейнер сторінки */
+#fok-pricing-page .card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 6px;
+}
+
+/* Фільтри */
+.fok-pricing-filters {
+    display: flex;
+    flex-wrap: wrap; /* Дозволяємо переносити елементи */
+    gap: 15px; /* Трохи зменшимо відступ */
+    align-items: flex-end;
+}
+
+.fok-filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex-grow: 1; /* Дозволяємо елементам розтягуватися, щоб заповнити простір */
+    min-width: 200px; /* Встановлюємо мінімальну комфортну ширину */
+}
+
+.fok-filter-item label {
+    font-weight: 500;
+}
+
+/* Прибираємо фіксовану ширину, щоб елемент був гнучким */
+.fok-filter-item select {
+    width: 100%;
+}
+
+
+/* Контейнер з таблицею */
+#fok-pricing-table-wrapper {
+    position: relative;
+    margin-top: 20px;
+}
+
+/* Елементи керування над таблицею (кнопка "Зберегти") */
+.fok-table-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+#fok-save-status.success {
+    color: #28a745;
+    font-weight: 500;
+}
+#fok-save-status.error {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* Поля для вводу в таблиці */
+#fok-pricing-table input[type="number"] {
+    width: 100%;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #8c8f94;
+}
+
+/* Стиль для рядка, в якому були внесені зміни */
+#fok-pricing-table tbody tr.is-changed {
+    background-color: #fffbe6; /* Світло-жовтий фон */
+}
+#fok-pricing-table tbody tr.is-changed td {
+    border-top: 1px solid #ffde66;
+    border-bottom: 1px solid #ffde66;
+}
+
+/* Лоадер (анімація завантаження) */
+.fok-loader-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fok-loader-overlay .spinner {
+    visibility: visible;
+    margin: auto;
+}
+
+/* -- Стилі для сортування таблиці -- */
+#fok-pricing-table th.sortable {
+    cursor: pointer;
+}
+
+#fok-pricing-table th.sortable:hover span {
+    color: #2271b1;
+}
+
+#fok-pricing-table th.sorted .sort-indicator {
+    display: inline-block;
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+    background-size: contain;
+}
+
+#fok-pricing-table th.sorted.asc .sort-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232271b1'%3E%3Cpath d='M7 14l5-5 5 5z'/%3E%3C/svg%3E");
+    transform: rotate(180deg);
+}
+
+#fok-pricing-table th.sorted.desc .sort-indicator {
+     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232271b1'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+}
+
+/* -- Стилі для масових дій -- */
+.fok-bulk-actions {
+    display: flex;
+    gap: 5px;
+}
+
+#fok-pricing-table th.check-column,
+#fok-pricing-table td.check-column {
+    padding: 10px 0 10px 5px;
+    width: 2.5em;
+}
+
+#fok-pricing-table tbody tr.is-selected {
+    background-color: #f0f6fc; /* Світло-синій фон для вибраних */
+}
+
+/* -- Стилі для модального вікна -- */
+#fok-price-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#fok-price-modal-content {
+    width: 100%;
+    max-width: 500px;
+    background: #f6f7f7;
+    padding: 20px 30px;
+    border-radius: 6px;
+}
+
+.fok-modal-form-group {
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+.fok-modal-form-group:first-of-type {
+    padding-top: 0;
+}
+
+.fok-modal-form-group > label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.fok-modal-input-group {
+    display: flex;
+    gap: 10px;
+    padding-left: 25px; /* Відступ для полів */
+}
+.fok-modal-input-group input,
+.fok-modal-input-group select {
+    flex-grow: 1;
+}
+
+.fok-modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
