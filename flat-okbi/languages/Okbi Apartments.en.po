@@ -1,0 +1,1259 @@
+# Copyright (C) 2025 Okbi
+# This file is distributed under the same license as the Flat Okbi plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Flat Okbi 2.3.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/okbi-apartments\n"
+"POT-Creation-Date: 2024-05-23 12:00+0000\n"
+"PO-Revision-Date: 2025-07-01 12:15+0300\n"
+"Last-Translator: vizl <vizl@gmx.com>\n"
+"Language-Team: English (United States)\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.6\n"
+"X-Domain: okbi-apartments\n"
+
+#: flat-okbi.php:4
+msgid "Плагін для керування каталогом квартир та житлових комплексів."
+msgstr ""
+"A plugin for managing a catalog of apartments and residential complexes."
+
+#: includes/meta-fields.php:12
+msgid "Додаткова інформація про ЖК"
+msgstr "Additional information about the residential complex"
+
+#: includes/meta-fields.php:18
+msgid "Секції цього ЖК"
+msgstr "Sections of this residential complex"
+
+#: includes/meta-fields.php:21
+msgid ""
+"Введіть назви секцій, кожну з нового рядка. Вони будуть створені "
+"автоматично. Щоб видалити секцію, просто видаліть рядок з її назвою і "
+"збережіть ЖК."
+msgstr ""
+"Enter the names of the sections, each on a new line. They will be created "
+"automatically. To delete a section, simply remove the line with its name and "
+"save the residential complex."
+
+#: includes/meta-fields.php:28
+msgid "Параметри секції"
+msgstr "Section Parameters"
+
+#: includes/meta-fields.php:34
+msgid "Кількість поверхів (висота сітки)"
+msgstr "Number of floors (grid height)"
+
+#: includes/meta-fields.php:36
+msgid "Вкажіть, скільки всього поверхів у цій секції."
+msgstr "Specify the total number of floors in this section."
+
+#: includes/meta-fields.php:40
+msgid "Кількість колонок (ширина сітки)"
+msgstr "Number of columns (grid width)"
+
+#: includes/meta-fields.php:42
+msgid ""
+"Вкажіть максимальну кількість об'єктів по горизонталі на будь-якому поверсі."
+msgstr ""
+"Specify the maximum number of properties horizontally on any given floor."
+
+#: includes/meta-fields.php:47
+msgid "Деталі заявки"
+msgstr "Lead Details"
+
+#: includes/meta-fields.php:143
+msgid "Коментар менеджера"
+msgstr "Manager's Comment"
+
+#: includes/meta-fields.php:146
+msgid "Запишіть результат розмови або наступні кроки..."
+msgstr "Record the conversation outcome or next steps..."
+
+#: includes/meta-fields.php:151
+msgid "Планування поверхів"
+msgstr "Floor Planning"
+
+#: includes/meta-fields.php:178
+msgid "Додати поверх"
+msgstr "Add Floor"
+
+#: includes/meta-fields.php:182
+msgid "Редактор плану поверху"
+msgstr "Floor Plan Editor"
+
+#: includes/meta-fields.php:186
+msgid "Об'єкти на поверсі"
+msgstr "Properties on Floor"
+
+#: includes/meta-fields.php:190
+msgid "Інструмент:"
+msgstr "Tool:"
+
+#: includes/meta-fields.php:192
+msgid "Полігон (малювання по точках)"
+msgstr "Polygon (drawing by points)"
+
+#: includes/meta-fields.php:195
+msgid "Прямокутник (малювання перетягуванням)"
+msgstr "Rectangle (drawing by dragging)"
+
+#: includes/meta-fields.php:202
+msgid ""
+"Оберіть об'єкт зі списку, щоб почати малювати полігон. Клік лівою кнопкою "
+"миші додає точку. Наведіть курсор миші на ребро фігури і натисніть ліву "
+"кнопку миші щоб додати ще одну точку. Правим кліком миші можна видалити "
+"точку."
+msgstr ""
+"Select a property from the list to start drawing a polygon. A left mouse "
+"click adds a point. Hover the mouse over an edge of the shape and left-click "
+"to add another point. You can delete a point with a right mouse click."
+
+#: includes/meta-fields.php:205
+msgid ""
+"Оберіть об'єкт, потім затисніть ліву кнопку миші на плані та потягніть, щоб "
+"намалювати прямокутник. Відпустіть кнопку, щоб завершити."
+msgstr ""
+"Select a property, then click and hold the left mouse button on the plan and "
+"drag to draw a rectangle. Release the button to finish."
+
+#: includes/pricing-page.php:8
+msgid "Керування цінами на об'єкти"
+msgstr "Property Price Management"
+
+#: includes/pricing-page.php:10
+msgid ""
+"На цій сторінці ви можете швидко переглядати та редагувати ціни на "
+"нерухомість. Використовуйте фільтри, щоб знайти потрібні об'єкти, внесіть "
+"зміни в полях \"Ціна за м²\" або \"Загальна ціна\" та натисніть \"Зберегти "
+"зміни\"."
+msgstr ""
+"On this page, you can quickly view and edit property prices. Use the filters "
+"to find the properties you need, make changes in the \"Price per m²\" or "
+"\"Total Price\" fields, and click \"Save Changes\"."
+
+#: includes/pricing-page.php:14
+msgid "Пояснення іконки \"Замочок\":"
+msgstr "Explanation of the \"Lock\" icon:"
+
+#: includes/pricing-page.php:15
+msgid ""
+"Ця іконка означає, що \"Загальна ціна\" на об'єкт є <strong>фіксованою</"
+"strong> і не залежить від площі. Вона встановлюється, коли ви вручну "
+"редагуєте поле \"Загальна ціна\". Якщо іконки немає, ціна є "
+"<strong>динамічною</strong> і автоматично розраховується від \"Ціни за м²\"."
+msgstr ""
+"This icon means that the \"Total Price\" for the property is <strong>fixed</"
+"strong> and does not depend on the area. It is set when you manually edit "
+"the \"Total Price\" field. If there is no icon, the price is "
+"<strong>dynamic</strong> and is automatically calculated from the \"Price "
+"per m²\"."
+
+#: includes/pricing-page.php:20 includes/classes/class-fok-post-types.php:26
+msgid "Житловий комплекс"
+msgstr "Residential Complex"
+
+#: includes/pricing-page.php:22 includes/classes/class-fok-admin.php:356
+msgid "Всі ЖК"
+msgstr "All Residential Complexes"
+
+#: includes/pricing-page.php:31 includes/classes/class-fok-post-types.php:32
+#: includes/classes/class-fok-admin.php:609
+msgid "Секція"
+msgstr "Section"
+
+#: includes/pricing-page.php:33
+msgid "Всі секції"
+msgstr "All Sections"
+
+#: includes/pricing-page.php:36 includes/classes/class-fok-shortcodes.php:144
+msgid "Тип нерухомості"
+msgstr "Property Type"
+
+#: includes/pricing-page.php:38
+msgid "Всі типи"
+msgstr "All Types"
+
+#: includes/pricing-page.php:39
+msgid "Квартира"
+msgstr "Apartment"
+
+#: includes/pricing-page.php:40 includes/classes/class-fok-post-types.php:42
+#: includes/classes/class-fok-admin.php:496
+#: includes/classes/class-fok-ajax.php:1234 includes/importer.php:85
+#: includes/classes/class-fok-shortcodes.php:147
+#: includes/classes/class-fok-assets.php:67
+msgid "Комерція"
+msgstr "Commercial"
+
+#: includes/pricing-page.php:41 includes/classes/class-fok-post-types.php:48
+#: includes/classes/class-fok-admin.php:497
+#: includes/classes/class-fok-ajax.php:273
+#: includes/classes/class-fok-ajax.php:1235 includes/importer.php:86
+msgid "Паркомісце"
+msgstr "Parking Space"
+
+#: includes/pricing-page.php:42 includes/classes/class-fok-post-types.php:54
+#: includes/classes/class-fok-admin.php:498
+#: includes/classes/class-fok-ajax.php:274
+#: includes/classes/class-fok-ajax.php:1236 includes/importer.php:87
+#: includes/classes/class-fok-assets.php:68
+msgid "Комора"
+msgstr "Storeroom"
+
+#: includes/pricing-page.php:45 includes/classes/class-fok-shortcodes.php:112
+msgid "Кількість кімнат"
+msgstr "Number of rooms"
+
+#: includes/pricing-page.php:47 includes/classes/class-fok-shortcodes.php:117
+msgid "Всі"
+msgstr "All"
+
+#: includes/pricing-page.php:57
+msgid "Скинути фільтри"
+msgstr "Reset Filters"
+
+#: includes/pricing-page.php:62
+msgid "Вибрати масову дію"
+msgstr "Select bulk action"
+
+#: includes/pricing-page.php:64
+msgid "Масові дії"
+msgstr "Bulk Actions"
+
+#: includes/pricing-page.php:65
+msgid "Змінити ціну"
+msgstr "Change price"
+
+#: includes/pricing-page.php:67
+msgid "Застосувати"
+msgstr "Apply"
+
+#: includes/pricing-page.php:69 includes/classes/class-fok-assets.php:136
+#: includes/classes/class-fok-admin.php:462
+msgid "Зберегти зміни"
+msgstr "Save Changes"
+
+#: includes/pricing-page.php:76 includes/pricing-page.php:88
+#: includes/classes/class-fok-admin.php:499
+msgid "Об'єкт"
+msgstr "Property"
+
+#: includes/pricing-page.php:77 includes/pricing-page.php:89
+#: includes/classes/class-fok-assets.php:57
+msgid "Тип"
+msgstr "Type"
+
+#: includes/pricing-page.php:78 includes/pricing-page.php:90
+#: includes/classes/class-fok-shortcodes.php:131
+#: includes/classes/class-fok-assets.php:59
+msgid "Поверх"
+msgstr "Floor"
+
+#: includes/pricing-page.php:79 includes/pricing-page.php:91
+#: includes/classes/class-fok-shortcodes.php:123
+msgid "Площа, м²"
+msgstr "Area, m²"
+
+#: includes/pricing-page.php:80 includes/pricing-page.php:92
+msgid "Ціна за м²"
+msgstr "Price per m²"
+
+#: includes/pricing-page.php:81 includes/pricing-page.php:93
+msgid "Загальна ціна"
+msgstr "Total Price"
+
+#: includes/pricing-page.php:84
+msgid "Оберіть ЖК для початку роботи..."
+msgstr "Select a residential complex to begin..."
+
+#: includes/pricing-page.php:99
+msgid "Масова зміна цін"
+msgstr "Bulk Price Change"
+
+#: includes/pricing-page.php:100
+msgid ""
+"Зміни будуть застосовані до <strong id=\"fok-modal-selected-count\">0</"
+"strong> обраних об'єктів."
+msgstr ""
+"Changes will be applied to <strong id=\"fok-modal-selected-count\">0</"
+"strong> selected properties."
+
+#: includes/pricing-page.php:104
+msgid "Збільшити ціну на:"
+msgstr "Increase price by:"
+
+#: includes/pricing-page.php:108 includes/pricing-page.php:121
+msgid "суму"
+msgstr "amount"
+
+#: includes/pricing-page.php:111 includes/pricing-page.php:124
+msgid "до загальної ціни"
+msgstr "to total price"
+
+#: includes/pricing-page.php:112 includes/pricing-page.php:125
+msgid "до ціни за м²"
+msgstr "to price per m²"
+
+#: includes/pricing-page.php:118
+msgid "Зменшити ціну на:"
+msgstr "Decrease price by:"
+
+#: includes/pricing-page.php:131
+msgid "Встановити нову ціну за м²:"
+msgstr "Set new price per m²:"
+
+#: includes/pricing-page.php:138
+msgid "Встановити нову загальну ціну:"
+msgstr "Set new total price:"
+
+#: includes/pricing-page.php:145
+msgid "Застосувати зміни"
+msgstr "Apply Changes"
+
+#: includes/pricing-page.php:146 includes/classes/class-fok-assets.php:174
+msgid "Скасувати"
+msgstr "Cancel"
+
+#: includes/classes/class-fok-assets.php:40
+msgid "Сталася помилка. Спробуйте ще раз."
+msgstr "An error occurred. Please try again."
+
+#: includes/classes/class-fok-assets.php:41
+#: includes/classes/class-fok-assets.php:140
+#: includes/classes/class-fok-assets.php:164
+msgid "Помилка сервера."
+msgstr "Server error."
+
+#: includes/classes/class-fok-assets.php:42
+msgid "Для цього ЖК ще не додано об'єктів."
+msgstr "No properties have been added to this residential complex yet."
+
+#: includes/classes/class-fok-assets.php:43
+msgid "На жаль, план для цього поверху ще не завантажено."
+msgstr "Unfortunately, the plan for this floor has not been uploaded yet."
+
+#: includes/classes/class-fok-assets.php:44
+#: includes/classes/class-fok-assets.php:137
+msgid "Помилка завантаження даних."
+msgstr "Data loading error."
+
+#: includes/classes/class-fok-assets.php:45
+msgid "Помилка зв'язку з сервером."
+msgstr "Server connection error."
+
+#: includes/classes/class-fok-assets.php:46
+msgid "Не вдалося визначити секцію або поверх для цього об'єкта."
+msgstr "Could not determine the section or floor for this property."
+
+#: includes/classes/class-fok-assets.php:47
+msgid "Надсилаємо..."
+msgstr "Sending..."
+
+#: includes/classes/class-fok-assets.php:48
+msgid "Надіслати заявку"
+msgstr "Send Request"
+
+#: includes/classes/class-fok-assets.php:49
+msgid "Помилка зв'язку."
+msgstr "Connection error."
+
+#: includes/classes/class-fok-assets.php:134
+msgid "Завантаження..."
+msgstr "Loading..."
+
+#: includes/classes/class-fok-assets.php:135
+#: includes/classes/class-fok-assets.php:166
+msgid "Збереження..."
+msgstr "Saving..."
+
+#: includes/classes/class-fok-assets.php:138
+msgid "Помилка збереження."
+msgstr "Error saving."
+
+#: includes/classes/class-fok-assets.php:139
+msgid ""
+"У вас є незбережені зміни. Якщо ви продовжите, вони будуть втрачені. Ви "
+"впевнені?"
+msgstr ""
+"You have unsaved changes. If you continue, they will be lost. Are you sure?"
+
+#: includes/classes/class-fok-assets.php:146
+msgid ""
+"Ви впевнені, що хочете видалити ВСІ житлові комплекси, секції, об'єкти та "
+"заявки? Ця дія незворотна."
+msgstr ""
+"Are you sure you want to delete ALL residential complexes, sections, "
+"properties, and leads? This action is irreversible."
+
+#: includes/classes/class-fok-assets.php:147
+msgid "БУДЬ ЛАСКА, ПІДТВЕРДІТЬ. Всі дані плагіна буде видалено назавжди."
+msgstr "PLEASE CONFIRM. All plugin data will be permanently deleted."
+
+#: includes/classes/class-fok-assets.php:148
+msgid "Видалення..."
+msgstr "Deleting..."
+
+#: includes/classes/class-fok-assets.php:149
+#: includes/classes/class-fok-assets.php:162
+msgid "Помилка: "
+msgstr "Error: "
+
+#: includes/classes/class-fok-assets.php:163
+msgid "невідома помилка"
+msgstr "unknown error"
+
+#: includes/classes/class-fok-assets.php:165
+msgid "Всі об'єкти розподілені."
+msgstr "All properties are distributed."
+
+#: includes/classes/class-fok-assets.php:166
+msgid "Є незбережені зміни."
+msgstr "There are unsaved changes."
+
+#: includes/classes/class-fok-assets.php:168
+msgid "Зміни успішно збережено."
+msgstr "Changes saved successfully."
+
+#: includes/classes/class-fok-assets.php:169
+msgid "Неможливо змінити розмір, місце зайняте іншим об'єктом."
+msgstr "Cannot resize, the space is occupied by another property."
+
+#: includes/classes/class-fok-assets.php:173
+msgid "Ви впевнені, що хочете видалити цей поверх?"
+msgstr "Are you sure you want to delete this floor?"
+
+#: includes/classes/class-fok-assets.php:174
+msgid "Зберегти і закрити"
+msgstr "Save and Close"
+
+#: includes/classes/class-fok-assets.php:176
+msgid "Немає об'єктів на цьому поверсі."
+msgstr "No properties on this floor."
+
+#: includes/classes/class-fok-assets.php:177
+msgid "Вкажіть номер поверху."
+msgstr "Please specify the floor number."
+
+#: includes/classes/class-fok-assets.php:178
+msgid "Видалити полігон?"
+msgstr "Delete polygon?"
+
+#: includes/classes/class-fok-post-types.php:26
+msgid "Житлові комплекси"
+msgstr "Residential Complexes"
+
+#: includes/classes/class-fok-post-types.php:26
+msgid "Додати новий ЖК"
+msgstr "Add New Residential Complex"
+
+#: includes/classes/class-fok-post-types.php:32
+msgid "Секції"
+msgstr "Sections"
+
+#: includes/classes/class-fok-post-types.php:32
+msgid "Додати нову секцію"
+msgstr "Add New Section"
+
+#: includes/classes/class-fok-post-types.php:38
+#: includes/classes/class-fok-shortcodes.php:146
+msgid "Квартири"
+msgstr "Apartments"
+
+#: includes/classes/class-fok-post-types.php:38
+msgid "Додати нову квартиру"
+msgstr "Add New Apartment"
+
+#: includes/classes/class-fok-post-types.php:42
+msgid "Додати комерцію"
+msgstr "Add Commercial Property"
+
+#: includes/classes/class-fok-post-types.php:48
+msgid "Паркомісця"
+msgstr "Parking Spaces"
+
+#: includes/classes/class-fok-post-types.php:48
+msgid "Додати паркомісце"
+msgstr "Add Parking Space"
+
+#: includes/classes/class-fok-post-types.php:54
+#: includes/classes/class-fok-shortcodes.php:148
+msgid "Комори"
+msgstr "Storerooms"
+
+#: includes/classes/class-fok-post-types.php:54
+msgid "Додати комору"
+msgstr "Add Storeroom"
+
+#: includes/classes/class-fok-post-types.php:60
+#: includes/classes/class-fok-post-types.php:62
+msgid "Заявки"
+msgstr "Leads"
+
+#: includes/classes/class-fok-post-types.php:61
+#: includes/classes/class-fok-admin.php:570
+msgid "Заявка"
+msgstr "Lead"
+
+#: includes/classes/class-fok-post-types.php:62
+msgid "Додати нову заявку"
+msgstr "Add New Lead"
+
+#: includes/classes/class-fok-post-types.php:63
+msgid "Редагувати заявку"
+msgstr "Edit Lead"
+
+#: includes/classes/class-fok-post-types.php:64
+msgid "Всі заявки"
+msgstr "All Leads"
+
+#: includes/classes/class-fok-post-types.php:65
+msgid "Переглянути заявку"
+msgstr "View Lead"
+
+#: includes/classes/class-fok-taxonomies.php:16
+msgid "Статуси"
+msgstr "Statuses"
+
+#: includes/classes/class-fok-taxonomies.php:17
+#: includes/classes/class-fok-admin.php:571
+msgid "Статус"
+msgstr "Status"
+
+#: includes/classes/class-fok-taxonomies.php:25
+msgid "Статуси заявок"
+msgstr "Lead Statuses"
+
+#: includes/classes/class-fok-taxonomies.php:26
+msgid "Статус заявки"
+msgstr "Lead Status"
+
+#: includes/classes/class-fok-shortcodes.php:79
+#: includes/classes/class-fok-admin.php:163
+msgid "Логотип"
+msgstr "Logo"
+
+#: includes/classes/class-fok-shortcodes.php:85
+#: includes/classes/class-fok-shortcodes.php:97
+msgid "Фільтри"
+msgstr "Filters"
+
+#: includes/classes/class-fok-shortcodes.php:94
+#: includes/classes/class-fok-shortcodes.php:107
+#: includes/classes/class-fok-shortcodes.php:162
+msgid "Закрити"
+msgstr "Close"
+
+#: includes/classes/class-fok-shortcodes.php:108
+msgid "Параметри пошуку"
+msgstr "Search Parameters"
+
+#: includes/classes/class-fok-shortcodes.php:141
+#: includes/classes/class-fok-assets.php:66
+msgid "Тільки вільні"
+msgstr "Only available"
+
+#: includes/classes/class-fok-admin.php:73
+#: includes/classes/class-fok-admin.php:74
+msgid "Flat Okbi"
+msgstr "Flat Okbi"
+
+#: includes/classes/class-fok-admin.php:81
+#: includes/classes/class-fok-admin.php:82
+msgid "Імпорт/Експорт"
+msgstr "Import/Export"
+
+#: includes/importer.php:9
+msgid "Імпорт та Експорт"
+msgstr "Import and Export"
+
+#: includes/classes/class-fok-admin.php:88
+#: includes/classes/class-fok-admin.php:89
+msgid "Керування цінами"
+msgstr "Price Management"
+
+#: includes/classes/class-fok-admin.php:95
+#: includes/classes/class-fok-admin.php:96
+msgid "Налаштування"
+msgstr "Settings"
+
+#: includes/classes/class-fok-admin.php:102
+#: includes/classes/class-fok-admin.php:103
+msgid "Документація"
+msgstr "Documentation"
+
+#: includes/classes/class-fok-admin.php:144
+msgid "Загальні налаштування"
+msgstr "General Settings"
+
+#: includes/classes/class-fok-admin.php:162
+msgid "Основні налаштування"
+msgstr "Main Settings"
+
+#: includes/classes/class-fok-admin.php:164
+msgid "Акцентний колір"
+msgstr "Accent Color"
+
+#: includes/classes/class-fok-admin.php:165
+msgid "Телефон відділу продажів"
+msgstr "Sales Department Phone"
+
+#: includes/classes/class-fok-admin.php:167
+msgid "Сповіщення"
+msgstr "Notifications"
+
+#: includes/classes/class-fok-admin.php:168
+msgid "Email для сповіщень"
+msgstr "Notification Email"
+
+#: includes/classes/class-fok-admin.php:169
+msgid "Telegram Bot Token"
+msgstr "Telegram Bot Token"
+
+#: includes/classes/class-fok-admin.php:170
+msgid "Telegram Chat ID"
+msgstr "Telegram Chat ID"
+
+#: includes/classes/class-fok-admin.php:172
+msgid "reCAPTCHA v3"
+msgstr "reCAPTCHA v3"
+
+#: includes/classes/class-fok-admin.php:173
+msgid "Ключ сайту (Site Key)"
+msgstr "Site Key"
+
+#: includes/classes/class-fok-admin.php:174
+msgid "Секретний ключ (Secret Key)"
+msgstr "Secret Key"
+
+#: includes/classes/class-fok-admin.php:186
+msgid "Завантажити лого"
+msgstr "Upload Logo"
+
+#: includes/classes/class-fok-admin.php:187
+msgid "Видалити лого"
+msgstr "Remove Logo"
+
+#: includes/classes/class-fok-admin.php:204
+msgid "На цю адресу будуть надходити заявки на бронювання."
+msgstr "Booking requests will be sent to this address."
+
+#: includes/classes/class-fok-admin.php:210
+msgid ""
+"Щоб отримати токен, створіть нового бота за допомогою <a href=\"https://t.me/"
+"BotFather\" target=\"_blank\">@BotFather</a>."
+msgstr ""
+"To get a token, create a new bot using <a href=\"https://t.me/BotFather\" "
+"target=\"_blank\">@BotFather</a>."
+
+#: includes/classes/class-fok-admin.php:216
+msgid ""
+"Це ID вашого каналу або групи. Щоб його дізнатись, можна використати бота <a "
+"href=\"https://t.me/userinfobot\" target=\"_blank\">@userinfobot</a> або "
+"аналогічного."
+msgstr ""
+"This is your channel or group ID. To find it out, you can use the <a "
+"href=\"https://t.me/userinfobot\" target=\"_blank\">@userinfobot</a> bot or "
+"a similar one."
+
+#: includes/classes/class-fok-admin.php:222
+msgid ""
+"Вставте сюди ключ сайту для reCAPTCHA v3, який ви отримали в <a "
+"href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">Google "
+"reCAPTCHA admin panel</a>."
+msgstr ""
+"Paste the site key for reCAPTCHA v3 that you received from the <a "
+"href=\"https://www.google.com/recaptcha/admin\" target=\"_blank\">Google "
+"reCAPTCHA admin panel</a> here."
+
+#: includes/classes/class-fok-admin.php:280
+msgid "Виберіть логотип"
+msgstr "Select Logo"
+
+#: includes/classes/class-fok-admin.php:282
+msgid "Використати цей логотип"
+msgstr "Use This Logo"
+
+#: includes/classes/class-fok-admin.php:322
+msgid ""
+"<strong>Плагін \"Flat Okbi\":</strong> Для повноцінної роботи необхідно "
+"встановити та активувати безкоштовний плагін <a href=\"https://wordpress.org/"
+"plugins/meta-box/\" target=\"_blank\">MetaBox</a>."
+msgstr ""
+"<strong>\"Flat Okbi\" Plugin:</strong> For full functionality, you need to "
+"install and activate the free <a href=\"https://wordpress.org/plugins/meta-"
+"box/\" target=\"_blank\">MetaBox</a> plugin."
+
+#: includes/classes/class-fok-admin.php:366
+msgid "Всі статуси"
+msgstr "All Statuses"
+
+#: includes/classes/class-fok-admin.php:418
+msgid "Код для запуску каталогу"
+msgstr "Code to launch the catalog"
+
+#: includes/classes/class-fok-admin.php:424
+msgid "Редактор сітки"
+msgstr "Grid Editor"
+
+#: includes/classes/class-fok-admin.php:433
+msgid ""
+"Щоб відкрити каталог для цього ЖК, додайте до будь-якої кнопки чи посилання "
+"на вашому сайті наступні атрибути:"
+msgstr ""
+"To open the catalog for this residential complex, add the following "
+"attributes to any button or link on your site:"
+
+#: includes/classes/class-fok-admin.php:435
+msgid ""
+"Також не забудьте розмістити на цій же сторінці шорткод <code>[okbi_viewer]</"
+"code> (у будь-якому місці)."
+msgstr ""
+"Also, don't forget to place the <code>[okbi_viewer]</code> shortcode on the "
+"same page (anywhere)."
+
+#: includes/classes/class-fok-admin.php:447
+msgid "Нерозподілені об'єкти"
+msgstr "Unassigned Properties"
+
+#: includes/classes/class-fok-admin.php:452
+msgid ""
+"<b>Важливо:</b> не забудьте зберегти зміни перед оновленням або закриттям "
+"сторінки."
+msgstr ""
+"<b>Important:</b> do not forget to save changes before refreshing or closing "
+"the page."
+
+#: includes/classes/class-fok-admin.php:572
+msgid "Телефон клієнта"
+msgstr "Client's Phone"
+
+#: includes/classes/class-fok-admin.php:573
+msgid "ЖК / Секція"
+msgstr "Res. Complex / Section"
+
+#: includes/classes/class-fok-admin.php:608
+msgid "ЖК"
+msgstr "Res. Complex"
+
+#: includes/classes/class-fok-admin.php:766
+msgid "Помилка безпеки (неправильний nonce)."
+msgstr "Security error (invalid nonce)."
+
+#: includes/classes/class-fok-admin.php:769
+#: includes/classes/class-fok-ajax.php:507
+msgid "У вас недостатньо прав для виконання цієї дії."
+msgstr "You do not have sufficient permissions to perform this action."
+
+#: includes/classes/class-fok-admin.php:793
+msgid "Усі дані плагіна (записи) успішно видалено. Видалено %d записів."
+msgstr ""
+"All plugin data (posts) has been successfully deleted. Deleted %d posts."
+
+#: includes/classes/class-fok-ajax.php:272
+msgid "Комерційне приміщення"
+msgstr "Commercial Premise"
+
+#: includes/classes/class-fok-ajax.php:276
+msgid "Нерухомість"
+msgstr "Property"
+
+#: includes/classes/class-fok-ajax.php:530
+msgid "Успішно видалено %d об'єктів."
+msgstr "Successfully deleted %d properties."
+
+#: includes/classes/class-fok-ajax.php:1270
+msgid "Успішно оновлено %d об'єктів."
+msgstr "Successfully updated %d properties."
+
+#: includes/documentation-page.php:8
+msgid "Документація по роботі з плагіном"
+msgstr "Plugin Usage Documentation"
+
+#: includes/documentation-page.php:11
+msgid "Імпорт та Експорт Даних"
+msgstr "Data Import and Export"
+
+#: includes/documentation-page.php:13
+msgid "Імпорт з CSV-файлу"
+msgstr "Import from CSV file"
+
+#: includes/documentation-page.php:14
+msgid ""
+"Функція імпорту дозволяє швидко наповнювати сайт даними про об'єкти "
+"нерухомості, автоматично створюючи житлові комплекси, секції та самі об'єкти."
+msgstr ""
+"The import feature allows you to quickly populate the site with property "
+"data, automatically creating residential complexes, sections, and the "
+"properties themselves."
+
+#: includes/documentation-page.php:15
+msgid ""
+"Для імпорту використовуйте CSV-файл у кодуванні <strong>UTF-8</strong>. Ви "
+"можете завантажити та використовувати як шаблон наш"
+msgstr ""
+"For importing, use a CSV file with <strong>UTF-8</strong> encoding. You can "
+"download and use our as a template"
+
+#: includes/documentation-page.php:17
+msgid "файл-приклад"
+msgstr "example file"
+
+#: includes/documentation-page.php:20
+msgid "Опис колонок CSV-файлу"
+msgstr "Description of CSV file columns"
+
+#: includes/documentation-page.php:24
+msgid "Назва колонки"
+msgstr "Column Name"
+
+#: includes/documentation-page.php:25
+msgid "Опис"
+msgstr "Description"
+
+#: includes/documentation-page.php:26
+msgid "Обов'язкове?"
+msgstr "Required?"
+
+#: includes/documentation-page.php:32
+msgid ""
+"<strong>Унікальний ідентифікатор об'єкта.</strong> Це може бути будь-який "
+"унікальний рядок (напр., артикул з CRM). За цим полем система визначає, "
+"створювати новий об'єкт чи оновлювати існуючий. <strong>Ніколи не змінюйте "
+"цей ID після першого імпорту!</strong>"
+msgstr ""
+"<strong>Unique property identifier.</strong> This can be any unique string "
+"(e.g., an article number from a CRM). The system uses this field to "
+"determine whether to create a new property or update an existing one. "
+"<strong>Never change this ID after the first import!</strong>"
+
+#: includes/documentation-page.php:33 includes/documentation-page.php:38
+#: includes/documentation-page.php:43 includes/documentation-page.php:48
+#: includes/documentation-page.php:53 includes/documentation-page.php:58
+#: includes/documentation-page.php:72
+msgid "Так"
+msgstr "Yes"
+
+#: includes/documentation-page.php:37
+msgid ""
+"Тип нерухомості. Можливі значення: <code>Квартира</code>, <code>Комерція</"
+"code>, <code>Паркомісце</code>, <code>Комора</code>."
+msgstr ""
+"Property type. Possible values: <code>Apartment</code>, <code>Commercial</"
+"code>, <code>Parking Space</code>, <code>Storeroom</code>."
+
+#: includes/documentation-page.php:42
+msgid ""
+"Назва житлового комплексу. Якщо ЖК з такою назвою не існує, він буде "
+"створений автоматично."
+msgstr ""
+"Name of the residential complex. If a complex with this name does not exist, "
+"it will be created automatically."
+
+#: includes/documentation-page.php:47
+msgid ""
+"Назва секції. Якщо секції з такою назвою немає в зазначеному ЖК, вона буде "
+"створена та прив'язана до нього."
+msgstr ""
+"Section name. If a section with this name does not exist in the specified "
+"complex, it will be created and linked to it."
+
+#: includes/documentation-page.php:52
+msgid "Номер об'єкта (квартири, офісу тощо)."
+msgstr "Property number (apartment, office, etc.)."
+
+#: includes/documentation-page.php:57
+msgid "Поверх, на якому розташований об'єкт."
+msgstr "The floor on which the property is located."
+
+#: includes/documentation-page.php:62
+msgid "Кількість кімнат. Заповнюється тільки для квартир."
+msgstr "Number of rooms. To be filled in for apartments only."
+
+#: includes/documentation-page.php:63 includes/documentation-page.php:68
+#: includes/documentation-page.php:77 includes/documentation-page.php:82
+#: includes/documentation-page.php:87 includes/documentation-page.php:92
+#: includes/documentation-page.php:97 includes/documentation-page.php:104
+msgid "Ні"
+msgstr "No"
+
+#: includes/documentation-page.php:67
+msgid ""
+"Загальна площа об'єкта в м². Використовуйте крапку як роздільник (напр., "
+"<code>45.5</code>)."
+msgstr ""
+"Total area of the property in m². Use a period as a decimal separator (e.g., "
+"<code>45.5</code>)."
+
+#: includes/documentation-page.php:76
+msgid "Ціна за квадратний метр."
+msgstr "Price per square meter."
+
+#: includes/documentation-page.php:81
+msgid ""
+"Фіксована загальна ціна за об'єкт. Має пріоритет над ціною за м². Важливо "
+"для паркомісць та комор."
+msgstr ""
+"Fixed total price for the property. Takes precedence over the price per m². "
+"Important for parking spaces and storerooms."
+
+#: includes/documentation-page.php:86
+msgid ""
+"Валюта. Можливі значення: <code>UAH</code>, <code>USD</code>, <code>EUR</"
+"code>."
+msgstr ""
+"Currency. Possible values: <code>UAH</code>, <code>USD</code>, <code>EUR</"
+"code>."
+
+#: includes/documentation-page.php:91
+msgid "Знижка у відсотках (тільки число, без знака %)."
+msgstr "Discount in percentage (number only, without the % sign)."
+
+#: includes/documentation-page.php:96
+msgid ""
+"Статус об'єкта. Можливі значення: <code>Вільно</code>, <code>Продано</code>, "
+"<code>Заброньовано</code>."
+msgstr ""
+"Property status. Possible values: <code>Available</code>, <code>Sold</code>, "
+"<code>Reserved</code>."
+
+#: includes/documentation-page.php:101
+#, fuzzy
+msgid ""
+"Зображення планувань. Вкажіть повні URL-адреси до зображень або назви файлів "
+"(напр. <code>plan.jpg</code>), які вже завантажені у Медіа-бібліотеку "
+"WordPress. Кілька зображень вказуйте через кому."
+msgstr ""
+"Layout images. Specify full URLs to images or filenames (e.g., <code>plan."
+"jpg</code>) that are already uploaded to the WordPress Media Library. Use "
+"commas to separate multiple images."
+
+#: includes/documentation-page.php:108
+msgid ""
+"Координати для розташування об'єкта в \"шахматці\". <strong>Ці поля є "
+"необов'язковими.</strong> Якщо їх не заповнювати, об'єкт потрапить до списку "
+"\"Нерозподілені об'єкти\", і ви зможете розставити його вручну в зручному "
+"візуальному редакторі."
+msgstr ""
+"Coordinates for placing the property in the grid view. <strong>These fields "
+"are optional.</strong> If left blank, the property will be placed in the "
+"\"Unassigned Properties\" list, and you can place it manually in the "
+"convenient visual editor."
+
+#: includes/documentation-page.php:114
+msgid "Робота з візуальними редакторами"
+msgstr "Working with Visual Editors"
+
+#: includes/documentation-page.php:116
+msgid "Редактор шахматки"
+msgstr "Grid Editor"
+
+#: includes/documentation-page.php:117
+msgid ""
+"Цей інструмент знаходиться на сторінці редагування кожної окремої "
+"<strong>Секції</strong>. Він дозволяє візуально розставляти об'єкти по "
+"поверхах так, як вони будуть відображатися для клієнтів."
+msgstr ""
+"This tool is located on the edit page of each individual <strong>Section</"
+"strong>. It allows you to visually arrange properties on floors as they will "
+"be displayed to clients."
+
+#: includes/documentation-page.php:119
+msgid "<strong>Додавання об'єкта на сітку:</strong>"
+msgstr "<strong>Adding a property to the grid:</strong>"
+
+#: includes/documentation-page.php:119
+msgid ""
+"Просто перетягніть об'єкт зі списку \"Нерозподілені об'єкти\" на потрібну "
+"клітинку в сітці."
+msgstr ""
+"Simply drag the property from the \"Unassigned Properties\" list to the "
+"desired cell in the grid."
+
+#: includes/documentation-page.php:120
+msgid "<strong>Переміщення об'єкта:</strong>"
+msgstr "<strong>Moving a property:</strong>"
+
+#: includes/documentation-page.php:120
+msgid ""
+"Наведіть на об'єкт, затисніть ліву кнопку миші та перетягніть його на нове "
+"місце."
+msgstr ""
+"Hover over the property, press and hold the left mouse button, and drag it "
+"to a new location."
+
+#: includes/documentation-page.php:121
+msgid "<strong>Зміна розміру (для дворівневих квартир):</strong>"
+msgstr "<strong>Resizing (for duplex apartments):</strong>"
+
+#: includes/documentation-page.php:121
+msgid ""
+"Наведіть на об'єкт, і в його правому нижньому кутку з'явиться синій маркер. "
+"Потягніть за нього, щоб змінити висоту або ширину об'єкта."
+msgstr ""
+"Hover over the property, and a blue handle will appear in its bottom-right "
+"corner. Drag it to change the height or width of the property."
+
+#: includes/documentation-page.php:122
+msgid "<strong>Прибрати об'єкт з сітки:</strong>"
+msgstr "<strong>Removing a property from the grid:</strong>"
+
+#: includes/documentation-page.php:122
+msgid ""
+"Щоб повернути об'єкт до списку нерозподілених, просто перетягніть його з "
+"сітки назад у блок \"Нерозподілені об'єкти\"."
+msgstr ""
+"To return a property to the unassigned list, simply drag it from the grid "
+"back to the \"Unassigned Properties\" block."
+
+#: includes/documentation-page.php:124 includes/documentation-page.php:134
+msgid "<strong>Важливо:</strong>"
+msgstr "<strong>Important:</strong>"
+
+#: includes/documentation-page.php:124
+msgid ""
+"Після внесення будь-яких змін у редакторі шахматки, не забудьте натиснути "
+"синю кнопку \"Зберегти зміни\" внизу редактора. Інакше ваші зміни не будуть "
+"збережені."
+msgstr ""
+"After making any changes in the grid editor, do not forget to click the blue "
+"\"Save Changes\" button at the bottom of the editor. Otherwise, your changes "
+"will not be saved."
+
+#: includes/documentation-page.php:126
+msgid "Редактор планів поверхів"
+msgstr "Floor Plan Editor"
+
+#: includes/documentation-page.php:127
+msgid ""
+"Цей інструмент також знаходиться на сторінці редагування <strong>Секції</"
+"strong>. Він дозволяє \"намалювати\" активні області поверх зображення з "
+"планом поверху. Клієнти зможуть натискати на ці області, щоб переглянути "
+"деталі квартири."
+msgstr ""
+"This tool is also located on the <strong>Section</strong> edit page. It "
+"allows you to \"draw\" active areas over the floor plan image. Clients will "
+"be able to click on these areas to view apartment details."
+
+#: includes/documentation-page.php:129
+msgid "<strong>Крок 1: Додавання поверху.</strong>"
+msgstr "<strong>Step 1: Adding a floor.</strong>"
+
+#: includes/documentation-page.php:129
+msgid ""
+"Натисніть кнопку \"Додати поверх\". Вкажіть номер поверху та завантажте "
+"зображення з планом."
+msgstr ""
+"Click the \"Add Floor\" button. Specify the floor number and upload the plan "
+"image."
+
+#: includes/documentation-page.php:130
+msgid "<strong>Крок 2: Відкриття редактора.</strong>"
+msgstr "<strong>Step 2: Opening the editor.</strong>"
+
+#: includes/documentation-page.php:130
+msgid ""
+"Кнопка \"Редагувати план\" стане активною тільки після завантаження "
+"зображення. Натисніть її, щоб відкрити спливаюче вікно редактора."
+msgstr ""
+"The \"Edit Plan\" button will become active only after an image has been "
+"uploaded. Click it to open the editor pop-up window."
+
+#: includes/documentation-page.php:131
+msgid "<strong>Крок 3: Малювання полігону.</strong>"
+msgstr "<strong>Step 3: Drawing a polygon.</strong>"
+
+#: includes/documentation-page.php:131
+msgid ""
+"У вікні редактора оберіть зі списку потрібний об'єкт (напр., \"Квартира "
+"№25\"). Після цього почніть малювати контур цієї квартири на зображенні, "
+"ставлячи точки кліком лівої кнопки миші. Щоб завершити малювання, натисніть "
+"праву кнопку миші."
+msgstr ""
+"In the editor window, select the desired property from the list (e.g., "
+"\"Apartment #25\"). Then, start drawing the outline of this apartment on the "
+"image by placing dots with a left mouse click. To finish drawing, right-"
+"click."
+
+#: includes/documentation-page.php:132
+msgid "<strong>Видалення полігону:</strong>"
+msgstr "<strong>Deleting a polygon:</strong>"
+
+#: includes/documentation-page.php:132
+msgid ""
+"Щоб видалити контур для певного об'єкта, знайдіть його у списку справа і "
+"натисніть на іконку кошика навпроти його назви."
+msgstr ""
+"To delete the outline for a specific property, find it in the list on the "
+"right and click the trash icon next to its name."
+
+#: includes/documentation-page.php:134
+msgid ""
+"Спочатку натисніть \"Зберегти і закрити\" у спливаючому вікні, а потім "
+"обов'язково натисніть синю кнопку \"Оновити\" на самій сторінці Секції, щоб "
+"зберегти всі зміни."
+msgstr ""
+"First, click \"Save and Close\" in the pop-up window, and then be sure to "
+"click the blue \"Update\" button on the Section page itself to save all "
+"changes."
+
+#: includes/importer.php:16
+msgid "Імпорт Об'єктів з CSV"
+msgstr "Import Properties from CSV"
+
+#: includes/importer.php:18
+msgid ""
+"У колонці `layout_images` вказуйте імена файлів зображень (з розширенням), "
+"розділені комою. Зображення мають бути попередньо завантажені у Медіа-"
+"бібліотеку."
+msgstr ""
+"In the `layout_images` column, specify the image filenames (with "
+"extensions), separated by commas. The images must be pre-uploaded to the "
+"Media Library."
+
+#: includes/importer.php:19
+msgid "Завантажити приклад файлу"
+msgstr "Download example file"
+
+#: includes/importer.php:24
+msgid ""
+"Не знаєте, з чого почати? Перегляньте детальну <a href=\"%s\">документацію "
+"по імпорту</a>."
+msgstr ""
+"Don't know where to start? Check out the detailed <a href=\"%s\">import "
+"documentation</a>."
+
+#: includes/importer.php:32
+msgid "Виберіть CSV-файл для імпорту:"
+msgstr "Select CSV file for import:"
+
+#: includes/importer.php:35
+msgid "Почати імпорт"
+msgstr "Start Import"
+
+#: includes/importer.php:40
+msgid "0%"
+msgstr "0%"
+
+#: includes/importer.php:48
+msgid "Експорт Об'єктів в CSV"
+msgstr "Export Properties to CSV"
+
+#: includes/importer.php:53
+msgid "Виберіть ЖК"
+msgstr "Select Residential Complex"
+
+#: includes/importer.php:55
+msgid "Всі житлові комплекси"
+msgstr "All Residential Complexes"
+
+#: includes/importer.php:64
+msgid "Типи нерухомості"
+msgstr "Property Types"
+
+#: includes/importer.php:88
+msgid "Експортувати Об'єкти"
+msgstr "Export Properties"
+
+#: includes/importer.php:94
+msgid "Небезпечна зона"
+msgstr "Danger Zone"
+
+#: includes/importer.php:95
+msgid ""
+"Ця дія назавжди видалить усі житлові комплекси, секції, об'єкти нерухомості "
+"та заявки, створені цим плагіном. Будьте обережні, відновити дані буде "
+"неможливо."
+msgstr ""
+"This action will permanently delete all residential complexes, sections, "
+"properties, and leads created by this plugin. Be careful, data recovery will "
+"be impossible."
+
+#: includes/importer.php:96
+msgid "Видалити всі дані плагіна"
+msgstr "Delete All Plugin Data"
+
+#: includes/importer.php:101
+msgid "Експорт Заявок в CSV"
+msgstr "Export Leads to CSV"
+
+#: includes/importer.php:102
+msgid "Ця дія експортує всі заявки (ліди), що є у системі, у єдиний CSV-файл."
+msgstr "This action exports all leads in the system into a single CSV file."
+
+#: includes/importer.php:106
+msgid "Експортувати Заявки"
+msgstr "Export Leads"
+
+#: includes/classes/class-fok-shortcodes.php:125
+#: includes/classes/class-fok-shortcodes.php:133
+msgid "від"
+msgstr "from"
+
+#: includes/classes/class-fok-shortcodes.php:127
+#: includes/classes/class-fok-shortcodes.php:135
+msgid "до"
+msgstr "to"
+
+#: includes/classes/class-fok-assets.php:50
+msgid "Паркінг"
+msgstr "Parking"
+
+#: includes/classes/class-fok-assets.php:51
+msgid "Вільно:"
+msgstr "Available:"
+
+#: includes/classes/class-fok-assets.php:52
+msgid "Вільно"
+msgstr "Available"
+
+#: includes/classes/class-fok-assets.php:53
+msgid "Продано"
+msgstr "Sold"
+
+#: includes/classes/class-fok-assets.php:54
+msgid "Заброньовано"
+msgstr "Reserved"
+
+#: includes/classes/class-fok-assets.php:55
+msgid "Забронювати"
+msgstr "Reserve"
+
+#: includes/classes/class-fok-assets.php:56
+msgid "Номер"
+msgstr "Number"
+
+#: includes/classes/class-fok-assets.php:58
+msgid "Площа"
+msgstr "Area"
+
+#: includes/classes/class-fok-assets.php:60
+msgid "К-сть кімнат"
+msgstr "Rooms"
+
+#: includes/classes/class-fok-assets.php:61
+msgid "до об'єкту"
+msgstr "Back to property"
+
+#: includes/classes/class-fok-assets.php:62
+msgid "Заявка на"
+msgstr "Request for"
+
+#: includes/classes/class-fok-assets.php:63
+msgid "Ваше ім'я"
+msgstr "Your name"
+
+#: includes/classes/class-fok-assets.php:64
+msgid "Телефон"
+msgstr "Phone"
+
+#: includes/classes/class-fok-assets.php:65
+#: includes/classes/class-fok-shortcodes.php:100
+msgid "Консультація"
+msgstr "Consultation"
+
+#: includes/classes/class-fok-assets.php:69
+msgid "Показати план поверху"
+msgstr "Show floor plan"
